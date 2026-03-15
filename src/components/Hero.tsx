@@ -40,7 +40,7 @@ const Hero = () => {
   const prev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <section className="relative w-full h-[600px] md:h-[750px] lg:h-[850px] bg-black overflow-hidden flex items-center">
+    <section className="relative w-full h-[650px] md:h-[750px] lg:h-[850px] bg-black overflow-hidden flex items-center">
       {/* Background Slides with Smooth Fade */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -52,7 +52,7 @@ const Hero = () => {
            className="absolute inset-0 z-0"
         >
           {/* Multi-layer Overlays for perfect legibility */}
-          <div className="absolute inset-0 bg-black/30 z-10" />
+          <div className="absolute inset-0 bg-black/40 z-10" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
           
           <img 
@@ -64,7 +64,7 @@ const Hero = () => {
       </AnimatePresence>
 
       <div className="container relative z-[40] mx-auto px-6 md:px-12">
-        <div className="max-w-4xl">
+        <div className="max-w-4xl pt-10 md:pt-0">
            <AnimatePresence mode="wait">
              <motion.div
                key={`content-${current}`}
@@ -75,29 +75,27 @@ const Hero = () => {
                className="text-left"
              >
                 <motion.h1 
-                  className="font-black leading-[1.1] uppercase tracking-tighter mb-8 text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
-                  style={{ fontSize: 'clamp(3.5rem, 10vw, 7.5rem)' }}
+                  className="font-black leading-[1] md:leading-[1.1] uppercase tracking-tighter mb-6 md:mb-8 text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-4xl sm:text-6xl md:text-8xl lg:text-[110px]"
                 >
                   {slides[current].title}
                 </motion.h1>
                 
                 <motion.p 
-                  className="text-white/90 leading-relaxed max-w-2xl mb-12 font-medium drop-shadow-md"
-                  style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)' }}
+                  className="text-white/90 leading-relaxed max-w-2xl mb-10 md:mb-12 font-medium drop-shadow-md text-sm sm:text-lg md:text-xl lg:text-2xl"
                 >
                   {slides[current].desc}
                 </motion.p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
+                <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 pt-4">
                   <button 
-                    className="w-full sm:w-auto flex items-center justify-center gap-3 bg-[#ff5722] hover:bg-[#ff7043] text-white px-12 py-5 rounded-xl font-black text-sm tracking-widest uppercase transition-all shadow-2xl group"
+                    className="w-full sm:w-auto flex items-center justify-center gap-3 bg-[#ff5722] hover:bg-[#ff7043] text-white px-8 md:px-12 py-4 md:py-5 rounded-xl font-black text-xs md:text-sm tracking-widest uppercase transition-all shadow-2xl group"
                   >
                     <ShoppingBag className="h-4 w-4" />
                     {slides[current].primary}
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                   <button 
-                    className="w-full sm:w-auto bg-black/40 hover:bg-black/60 text-white border-2 border-white/20 px-12 py-5 rounded-xl font-black text-sm tracking-widest uppercase transition-all backdrop-blur-md"
+                    className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border-2 border-white/10 px-8 md:px-12 py-4 md:py-5 rounded-xl font-black text-xs md:text-sm tracking-widest uppercase transition-all backdrop-blur-md"
                   >
                     {slides[current].secondary}
                   </button>
@@ -107,25 +105,30 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Modern Slide Navigation */}
-      <div className="absolute bottom-12 left-12 z-50 flex items-center gap-4">
-         {slides.map((_, i) => (
-           <button 
-             key={i} 
-             onClick={() => setCurrent(i)}
-             className={`h-1.5 transition-all duration-700 rounded-full ${current === i ? 'w-20 bg-[#ff5722]' : 'w-4 bg-white/30 hover:bg-white/50'}`}
-           />
-         ))}
-      </div>
+      {/* Bottom Controls Bar - Fixed for Mobile Visibility */}
+      <div className="absolute bottom-6 md:bottom-12 left-0 right-0 z-50 px-6 md:px-12 pointer-events-none">
+        <div className="container mx-auto flex items-center justify-between pointer-events-auto">
+          {/* Slide Navigation */}
+          <div className="flex items-center gap-2 md:gap-4">
+             {slides.map((_, i) => (
+               <button 
+                 key={i} 
+                 onClick={() => setCurrent(i)}
+                 className={`h-1 md:h-1.5 transition-all duration-700 rounded-full ${current === i ? 'w-12 md:w-20 bg-[#ff5722]' : 'w-3 md:w-4 bg-white/30 hover:bg-white/50'}`}
+               />
+             ))}
+          </div>
 
-      {/* Arrow Controls */}
-      <div className="absolute bottom-12 right-12 z-50 flex gap-4">
-         <button onClick={prev} className="p-4 rounded-full border-2 border-white/10 text-white hover:bg-white/10 transition-all backdrop-blur-sm">
-            <ChevronLeft className="h-6 w-6" />
-         </button>
-         <button onClick={next} className="p-4 rounded-full border-2 border-white/10 text-white hover:bg-white/10 transition-all backdrop-blur-sm">
-            <ChevronRight className="h-6 w-6" />
-         </button>
+          {/* Arrow Controls */}
+          <div className="flex gap-2 md:gap-4">
+             <button onClick={prev} className="p-3 md:p-4 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all backdrop-blur-sm">
+                <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+             </button>
+             <button onClick={next} className="p-3 md:p-4 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all backdrop-blur-sm">
+                <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+             </button>
+          </div>
+        </div>
       </div>
     </section>
   );
