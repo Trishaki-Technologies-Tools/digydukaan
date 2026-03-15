@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ShoppingBag, Star } from 'lucide-react';
 
 interface ProductProps {
