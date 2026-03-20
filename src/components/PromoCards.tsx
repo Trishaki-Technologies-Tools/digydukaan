@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const Card = ({ card, className }: { card: any, className: string }) => {
