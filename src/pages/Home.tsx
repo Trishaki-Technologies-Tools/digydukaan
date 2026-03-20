@@ -17,9 +17,9 @@ const Home = () => {
       <TopBar />
       <Navbar />
       <Hero />
+      <CategorySelector />
       <Features />
       <PromoCards />
-      <CategorySelector />
       
       {/* Highly Recommended Section */}
       <ProductSection 

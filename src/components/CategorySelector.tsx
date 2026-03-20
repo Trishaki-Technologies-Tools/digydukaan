@@ -1,37 +1,41 @@
 
 const categories = [
-  { name: "Home Appliances", items: "12 Items", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop" },
-  { name: "PC & Laptop", items: "8 Items", img: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop" },
-  { name: "Kitchen Appliances", items: "15 Items", img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" },
-  { name: "Phone & Tablet", items: "10 Items", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=2080&auto=format&fit=crop" },
-  { name: "Accessories", items: "24 Items", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2070&auto=format&fit=crop" }
+  { name: "Dresses", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1983&auto=format&fit=crop" },
+  { name: "Tops & Blouses", img: "https://images.unsplash.com/photo-1589310243389-96a5483213a8?q=80&w=1974&auto=format&fit=crop" },
+  { name: "T-Shirts", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1960&auto=format&fit=crop" },
+  { name: "Co-ords", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1972&auto=format&fit=crop" },
+  { name: "Accessories", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2070&auto=format&fit=crop" },
+  { name: "Activewear", img: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=2070&auto=format&fit=crop" },
+  { name: "Lingerie", img: "https://images.unsplash.com/photo-1550614000-4895a10e1bfd?q=80&w=1974&auto=format&fit=crop" },
+  { name: "Beauty", img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1987&auto=format&fit=crop" },
+  { name: "PC & Laptop", img: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop" },
+  { name: "Kitchen", img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" },
+  { name: "Phones", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=2080&auto=format&fit=crop" },
+  { name: "Smart Home", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop" }
 ];
 
 const CategorySelector = () => {
   return (
-    <section className="py-24 bg-background">
+    <section className="py-12 md:py-24 bg-background">
       <div className="container text-center">
-        <h2 className="text-3xl font-bold text-secondary uppercase tracking-tighter mb-4 font-heading">
-          Choose your Category
+        <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tighter mb-4 font-heading">
+          HOT CATEGORIES
         </h2>
-        <p className="text-muted max-w-lg mx-auto mb-16 font-medium">
-          Explore our wide range of categories, from high-performance electronics to premium home essentials, all curated for your modern lifestyle.
+        <p className="text-muted max-w-lg mx-auto mb-8 md:mb-16 font-medium text-xs md:text-base">
+          Explore our wide range of categories, from premium fashion to high-performance electronics.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-16">
-          {categories.map((cat, i) => (
+        <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-x-3 md:gap-x-10 lg:gap-x-12 gap-y-6 md:gap-y-16">
+          {categories.slice(0, 12).map((cat, i) => (
             <div key={i} className="flex flex-col items-center group cursor-pointer">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center p-2 border-2 border-transparent group-hover:border-primary/20 group-hover:bg-white group-hover:shadow-2xl transition-all duration-500 overflow-hidden">
+              <div className="relative w-full max-w-[180px] aspect-[4/5] bg-white rounded-t-[50%] flex items-center justify-center p-1 border border-secondary/5 group-hover:border-primary/20 group-hover:bg-white group-hover:shadow-lg transition-all duration-500 overflow-hidden shadow-sm">
                 <img 
                     src={cat.img} 
                     alt={cat.name} 
-                    className="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover rounded-t-[50%] transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-x-0 bottom-0 py-1 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest">{cat.items}</span>
-                </div>
               </div>
-              <h3 className="mt-6 text-sm font-bold text-secondary uppercase tracking-widest group-hover:text-primary transition-colors font-heading">
+              <h3 className="mt-4 text-[9px] md:text-sm lg:text-base font-bold text-secondary uppercase tracking-widest group-hover:text-primary transition-colors font-heading text-center">
                 {cat.name}
               </h3>
             </div>
