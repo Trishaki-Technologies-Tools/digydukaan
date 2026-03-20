@@ -7,7 +7,6 @@ import CategorySelector from '../components/CategorySelector';
 import ProductSection from '../components/ProductSection';
 import BannerCollage from '../components/BannerCollage';
 import Testimonials from '../components/Testimonials';
-import InstagramSection from '../components/InstagramSection';
 import Newsletter from '../components/Newsletter';
 import Footer from '../components/Footer';
 import MobileNav from '../components/MobileNav';
@@ -67,7 +66,6 @@ const Home = () => {
       </div>
 
       <Testimonials />
-      <InstagramSection />
       <Newsletter />
       <Footer />
       <MobileNav />

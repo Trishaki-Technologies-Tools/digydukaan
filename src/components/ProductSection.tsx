@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Star, ShoppingBag, Eye, Heart } from 'lucide-react';
+import { Star, ShoppingBag, Heart } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 const products = [
@@ -27,7 +27,7 @@ const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 md:gap-y-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-6 md:gap-y-12">
           {products.map((product, idx) => (
             <motion.div
               key={idx}
@@ -53,9 +53,6 @@ const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }
                 <div className="absolute top-4 md:top-6 right-4 md:right-6 flex flex-col gap-3 lg:translate-x-12 lg:opacity-0 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-500">
                   <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary/40 hover:text-primary hover:shadow-xl shadow-md transition-all">
                     <Heart className="h-4 w-4" />
-                  </button>
-                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary/40 hover:text-primary hover:shadow-xl shadow-md transition-all">
-                    <Eye className="h-4 w-4" />
                   </button>
                 </div>
 
