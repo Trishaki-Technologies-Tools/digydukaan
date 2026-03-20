@@ -15,14 +15,14 @@ const products = [
 
 const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }) => {
   return (
-    <section className="py-12 md:py-24 bg-white px-4 md:px-0">
+    <section className="py-12 md:py-24 bg-background px-4 md:px-0">
       <div className="container">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6">
           <div className="max-w-xl">
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 uppercase tracking-tighter mb-4">{title}</h2>
-            <p className="text-sm md:text-base text-slate-400 font-medium leading-relaxed">{subtitle}</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary uppercase tracking-tighter mb-4 font-heading">{title}</h2>
+            <p className="text-sm md:text-base text-muted font-medium leading-relaxed">{subtitle}</p>
           </div>
-          <button className="bg-slate-50 border border-slate-200 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
+          <button className="bg-white border border-secondary/10 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-secondary hover:text-white transition-all">
             View All
           </button>
         </div>
@@ -37,7 +37,7 @@ const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }
               transition={{ delay: idx * 0.1 }}
               className="group relative"
             >
-              <div className="aspect-[3/4] rounded-[2rem] bg-slate-50 border border-slate-100/50 overflow-hidden relative mb-5 md:mb-6">
+              <div className="aspect-[3/4] rounded-[2rem] bg-white border border-secondary/5 overflow-hidden relative mb-5 md:mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500">
                 <img 
                   src={product.img} 
                   alt={product.name} 
@@ -45,26 +45,22 @@ const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }
                 />
                 
                 {product.badge && (
-                  <div className="absolute top-4 md:top-6 left-4 md:left-6 bg-slate-900 text-white text-[8px] md:text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                  <div className="absolute top-4 md:top-6 left-4 md:left-6 bg-primary text-white text-[8px] md:text-[9px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest">
                     {product.badge}
                   </div>
                 )}
 
-                {/* Actions - Always partially visible on mobile? Or keep hover? 
-                    Actually, let's make them always visible on touch devices if we could, 
-                    but standard way is to show them on click or just keep the clean look.
-                    We will keep hover but make them slightly larger for touch. */}
                 <div className="absolute top-4 md:top-6 right-4 md:right-6 flex flex-col gap-3 lg:translate-x-12 lg:opacity-0 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-500">
-                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-blue-500 hover:shadow-xl shadow-md transition-all">
+                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary/40 hover:text-primary hover:shadow-xl shadow-md transition-all">
                     <Heart className="h-4 w-4" />
                   </button>
-                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-blue-500 hover:shadow-xl shadow-md transition-all">
+                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary/40 hover:text-primary hover:shadow-xl shadow-md transition-all">
                     <Eye className="h-4 w-4" />
                   </button>
                 </div>
 
                 <div className="absolute inset-x-4 md:inset-x-6 bottom-4 md:bottom-6 lg:translate-y-20 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-500">
-                  <button className="w-full bg-blue-600 text-white py-3 md:py-4 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 md:gap-3 shadow-2xl shadow-blue-500/40">
+                  <button className="w-full bg-primary text-white py-3 md:py-4 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 md:gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all">
                     <ShoppingBag className="h-4 w-4" />
                     Add to Cart
                   </button>
@@ -75,17 +71,17 @@ const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex items-center">
                     {[1, 2, 3, 4, 5].map(s => (
-                      <Star key={s} className={cn("h-3 w-3", s <= 4 ? "fill-orange-400 text-orange-400" : "text-slate-200")} />
+                      <Star key={s} className={cn("h-3 w-3", s <= 4 ? "fill-primary text-primary" : "text-gray-200")} />
                     ))}
                   </div>
-                  <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase">({product.rating})</span>
+                  <span className="text-[9px] md:text-[10px] font-bold text-muted uppercase">({product.rating})</span>
                 </div>
-                <h3 className="text-sm md:text-base font-black text-slate-900 uppercase tracking-tighter mb-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm md:text-base font-bold text-secondary uppercase tracking-tighter mb-2 group-hover:text-primary transition-colors font-heading">
                   {product.name}
                 </h3>
                 <div className="flex items-center gap-3">
-                  <span className="text-base md:text-lg font-black text-slate-900">{product.price}</span>
-                  <span className="text-xs md:text-sm font-bold text-slate-300 line-through italic">{product.oldPrice}</span>
+                  <span className="text-base md:text-lg font-bold text-secondary">{product.price}</span>
+                  <span className="text-xs md:text-sm font-semibold text-muted/60 line-through italic">{product.oldPrice}</span>
                 </div>
               </div>
             </motion.div>

@@ -20,20 +20,20 @@ const ProductCard = ({ name, category, price, image, rating }: ProductProps) => 
         />
       </div>
       
-      <div className="p-4">
+      <div className="p-4 bg-white">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{category}</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted">{category}</span>
           <div className="flex items-center gap-1">
-            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-            <span className="text-[11px] font-semibold text-slate-600">{rating}</span>
+            <Star className="h-3 w-3 fill-orange-400 text-orange-400" />
+            <span className="text-[11px] font-bold text-secondary">{rating}</span>
           </div>
         </div>
         
-        <h3 className="text-sm font-semibold text-slate-900 line-clamp-1 mb-2">{name}</h3>
+        <h3 className="text-sm font-bold text-secondary line-clamp-1 mb-2 font-heading">{name}</h3>
         
         <div className="flex items-center justify-between mt-auto">
-          <span className="text-lg font-bold text-slate-900">₹{price.toLocaleString()}</span>
-          <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white hover:bg-blue-600 transition-colors">
+          <span className="text-lg font-bold text-secondary">₹{price.toLocaleString()}</span>
+          <button className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary/90 transition-all shadow-md active:scale-95">
             <ShoppingBag className="h-4 w-4" />
           </button>
         </div>

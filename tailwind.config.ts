@@ -7,27 +7,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#ffffff",
-        foreground: "#0f172a",
+        background: "#F5F7FA",
+        foreground: "#1A1A1A",
         primary: {
-          DEFAULT: "#2563eb",
+          DEFAULT: "#FF7A00",
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#f1f5f9",
-          foreground: "#0f172a",
-        },
-        accent: {
-          DEFAULT: "#f8fafc",
-          foreground: "#0f172a",
-        },
-        muted: {
-          DEFAULT: "#64748b",
+          DEFAULT: "#0B4F6C",
           foreground: "#ffffff",
         },
+        accent: {
+          DEFAULT: "#FFA64D",
+          foreground: "#ffffff",
+        },
+        muted: {
+          DEFAULT: "#6B7280",
+          foreground: "#ffffff",
+        },
+        brand: {
+          blue: "#0B4F6C",
+          orange: "#FF7A00",
+          accent: "#FFA64D",
+          bg: "#F5F7FA",
+          dark: "#1A1A1A",
+          light: "#6B7280",
+        }
       },
       fontFamily: {
-        sans: ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['Poppins', 'sans-serif'],
+        sans: ['Inter', 'Roboto', 'sans-serif'],
       },
       borderRadius: {
         'xl': '1rem',

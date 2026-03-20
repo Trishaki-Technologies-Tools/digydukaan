@@ -17,7 +17,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight font-semibold;
+    @apply tracking-tight font-bold font-heading;
   }
 }
 
@@ -31,7 +31,7 @@
   }
 
   .btn-primary {
-    @apply bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90;
+    @apply bg-primary text-white shadow hover:bg-primary/90;
   }
 
   .btn-outline {

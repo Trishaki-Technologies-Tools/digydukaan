@@ -9,29 +9,29 @@ const categories = [
 
 const CategorySelector = () => {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-background">
       <div className="container text-center">
-        <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter mb-4">
+        <h2 className="text-3xl font-bold text-secondary uppercase tracking-tighter mb-4 font-heading">
           Choose your Category
         </h2>
-        <p className="text-slate-400 max-w-lg mx-auto mb-16 font-medium">
-          Smartphones provide quick access to notifications, calls, messages, and apps right at your wrist, reducing the need to constantly check your phone.
+        <p className="text-muted max-w-lg mx-auto mb-16 font-medium">
+          Explore our wide range of categories, from high-performance electronics to premium home essentials, all curated for your modern lifestyle.
         </p>
 
         <div className="flex flex-wrap justify-center gap-16">
           {categories.map((cat, i) => (
             <div key={i} className="flex flex-col items-center group cursor-pointer">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 bg-slate-50 rounded-full flex items-center justify-center p-2 border-2 border-transparent group-hover:border-blue-500/20 group-hover:bg-white group-hover:shadow-2xl transition-all duration-500 overflow-hidden">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center p-2 border-2 border-transparent group-hover:border-primary/20 group-hover:bg-white group-hover:shadow-2xl transition-all duration-500 overflow-hidden">
                 <img 
                     src={cat.img} 
                     alt={cat.name} 
                     className="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-x-0 bottom-0 py-1 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">{cat.items}</span>
+                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest">{cat.items}</span>
                 </div>
               </div>
-              <h3 className="mt-6 text-sm font-black text-slate-900 uppercase tracking-widest group-hover:text-blue-500 transition-colors">
+              <h3 className="mt-6 text-sm font-bold text-secondary uppercase tracking-widest group-hover:text-primary transition-colors font-heading">
                 {cat.name}
               </h3>
             </div>
