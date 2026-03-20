@@ -10,10 +10,11 @@ import Testimonials from '../components/Testimonials';
 import InstagramSection from '../components/InstagramSection';
 import Newsletter from '../components/Newsletter';
 import Footer from '../components/Footer';
+import MobileNav from '../components/MobileNav';
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-white font-sans selection:bg-blue-500 selection:text-white pb-20 md:pb-0">
       <TopBar />
       <Navbar />
       <Hero />
@@ -69,6 +70,7 @@ const Home = () => {
       <InstagramSection />
       <Newsletter />
       <Footer />
+      <MobileNav />
     </div>
   );
 };
