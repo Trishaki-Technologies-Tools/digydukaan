@@ -1,6 +1,6 @@
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';
-import Hero from '../components/Hero';
+import OfferCarousel from '../components/OfferCarousel';
 import Features from '../components/Features';
 import PromoCards from '../components/PromoCards';
 import CategorySelector from '../components/CategorySelector';
@@ -16,7 +16,7 @@ const Home = () => {
     <div className="min-h-screen bg-white font-sans selection:bg-blue-500 selection:text-white pb-20 md:pb-0">
       <TopBar />
       <Navbar />
-      <Hero />
+      <OfferCarousel />
       <CategorySelector />
       <Features />
       <PromoCards />
