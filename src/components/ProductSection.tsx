@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Star, Heart, ChevronRight, TrendingUp } from 'lucide-react';
+import { Star, Heart, ChevronRight, TrendingUp } from 'lucide-react';
 import { dataService } from '../dataService';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
@@ -8,9 +8,10 @@ import { useWishlist } from '../context/WishlistContext';
 
 interface ProductSectionProps {
   title: string;
+  subtitle?: string;
 }
 
-const ProductSection: React.FC<ProductSectionProps> = ({ title }) => {
+const ProductSection: React.FC<ProductSectionProps> = ({ title, subtitle }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
@@ -66,6 +67,9 @@ const ProductSection: React.FC<ProductSectionProps> = ({ title }) => {
             <h2 className="text-4xl font-black text-secondary tracking-tighter uppercase font-heading leading-tight">
               {title.split(' ')[0]} <span className="text-primary italic">{title.split(' ').slice(1).join(' ')}</span>
             </h2>
+            {subtitle && (
+               <p className="text-[11px] font-bold text-secondary/30 uppercase tracking-[0.2em]">{subtitle}</p>
+            )}
           </div>
           <Link to="/category/all" className="hidden md:flex items-center gap-2 text-secondary/40 hover:text-primary font-bold text-xs uppercase tracking-widest transition-all group">
             View All <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />

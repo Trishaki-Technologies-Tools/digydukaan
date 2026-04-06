@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Truck, CreditCard, ShieldCheck, ShoppingBag, MapPin, Phone, User, CheckCircle2, Loader2, ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Truck, CreditCard, ShieldCheck, MapPin, CheckCircle2, Loader2, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { dataService } from '../dataService';
@@ -11,7 +11,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const Checkout = () => {
-  const { items, totalPrice, totalItems, clearCart } = useCart();
+  const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);

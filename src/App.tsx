@@ -9,7 +9,6 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import ProductsList from './pages/Admin/ProductsList';
 import AddProduct from './pages/Admin/AddProduct';
 import Categories from './pages/Admin/Categories';
-import Inventory from './pages/Admin/Inventory';
 import Orders from './pages/Admin/Orders';
 import AdminLayout from './components/Admin/AdminLayout';
 import './index.css';

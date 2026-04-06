@@ -6,17 +6,15 @@ import {
   ShoppingBag, 
   Truck, 
   CheckCircle2, 
-  ArrowLeft, 
   Clock, 
   MapPin, 
   RefreshCcw, 
-  XCircle, 
   Heart,
   ChevronRight,
   CreditCard,
   Plus
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { dataService } from '../dataService';
 import Navbar from '../components/Navbar';
@@ -48,7 +46,6 @@ const MyOrders = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isGuest, setIsGuest] = useState(false);
-    const navigate = useNavigate();
     
     const { wishlist, toggleWishlist } = useWishlist();
     const { addToCart } = useCart();
@@ -151,7 +148,7 @@ const MyOrders = () => {
                                 <Link to="/" className="bg-slate-900 text-white px-14 py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl hover:bg-primary transition-all inline-block uppercase">Return to Store</Link>
                             </div>
                         ) : (
-                            orders.map((order, idx) => (
+                            orders.map((order) => (
                                 <div key={order.id} className="bg-white rounded-[3rem] border border-slate-100 shadow-xl overflow-hidden group">
                                     <div className="p-10 pb-6 flex flex-wrap items-center justify-between gap-8 border-b border-slate-50">
                                         <div className="flex flex-wrap items-center gap-10">
