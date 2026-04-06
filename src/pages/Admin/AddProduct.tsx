@@ -97,7 +97,8 @@ const AddProduct = () => {
     const { error } = await dataService.addProduct(payload);
 
     if (error) {
-       alert('Error saving product: ' + (error.message || error));
+        const errorMsg = typeof error === 'string' ? error : (error as any).message || 'Unknown error';
+        alert('Error saving product: ' + errorMsg);
     } else {
        alert(id ? 'Product updated successfully!' : 'Product saved successfully!');
        navigate('/admin/products');
