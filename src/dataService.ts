@@ -155,6 +155,11 @@ export const dataService = {
      return await supabase.from('categories').update(category).eq('id', id);
   },
 
+  async updateProductStock(id: string, newStock: number) {
+     if (!isSupabaseConfigured()) return { error: 'Not Configured' };
+     return await supabase.from('products').update({ stock: newStock }).eq('id', id);
+  },
+
   // 5. ATOMIC PURE INSERT: FULL CATALOG RESTORATION
   async forceSeedProducts() {
     if (!isSupabaseConfigured()) return { error: 'Not Configured' };

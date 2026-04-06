@@ -17,7 +17,7 @@ const CategoryListing = () => {
     const [loading, setLoading] = useState(true);
     
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
+    const [priceRange] = useState<[number, number]>([0, 100000]);
     const [sortBy, setSortBy] = useState('Featured');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
