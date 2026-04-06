@@ -1,49 +1,110 @@
-
-const categories = [
-  { name: "Dresses", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1983&auto=format&fit=crop" },
-  { name: "Tops & Blouses", img: "https://images.unsplash.com/photo-1589310243389-96a5483213a8?q=80&w=1974&auto=format&fit=crop" },
-  { name: "T-Shirts", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1960&auto=format&fit=crop" },
-  { name: "Co-ords", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1972&auto=format&fit=crop" },
-  { name: "Accessories", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2070&auto=format&fit=crop" },
-  { name: "Activewear", img: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=2070&auto=format&fit=crop" },
-  { name: "Lingerie", img: "https://images.unsplash.com/photo-1550614000-4895a10e1bfd?q=80&w=1974&auto=format&fit=crop" },
-  { name: "Beauty", img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1987&auto=format&fit=crop" },
-  { name: "PC & Laptop", img: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop" },
-  { name: "Kitchen", img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" },
-  { name: "Phones", img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=2080&auto=format&fit=crop" },
-  { name: "Smart Home", img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop" }
-];
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Sparkles, ArrowRight, Star } from 'lucide-react';
+import { dataService } from '../dataService';
 
 const CategorySelector = () => {
-  return (
-    <section className="py-12 md:py-24 bg-background">
-      <div className="container text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-secondary uppercase tracking-tighter mb-4 font-heading">
-          HOT CATEGORIES
-        </h2>
-        <p className="text-muted max-w-lg mx-auto mb-8 md:mb-16 font-medium text-xs md:text-base">
-          Explore our wide range of categories, from premium fashion to high-performance electronics.
-        </p>
+    const [categories, setCategories] = useState<any[]>([]);
+    const navigate = useNavigate();
 
-        <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-x-3 md:gap-x-10 lg:gap-x-12 gap-y-6 md:gap-y-16">
-          {categories.slice(0, 12).map((cat, i) => (
-            <div key={i} className="flex flex-col items-center group cursor-pointer">
-              <div className="relative w-full max-w-[180px] aspect-[4/5] bg-white rounded-t-[50%] flex items-center justify-center p-1 border border-secondary/5 group-hover:border-primary/20 group-hover:bg-white group-hover:shadow-lg transition-all duration-500 overflow-hidden shadow-sm">
-                <img 
-                    src={cat.img} 
-                    alt={cat.name} 
-                    className="w-full h-full object-cover rounded-t-[50%] transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <h3 className="mt-4 text-[9px] md:text-sm lg:text-base font-bold text-secondary uppercase tracking-widest group-hover:text-primary transition-colors font-heading text-center">
-                {cat.name}
-              </h3>
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const data = await dataService.getCategories();
+            setCategories(data);
+        };
+        fetchCategories();
+    }, []);
+
+    const getCollectionTag = (idx: number) => {
+        const tags = ["Viral", "Trending", "Special", "New", "Premium", "Top"];
+        return tags[idx % tags.length];
+    }
+
+    return (
+        <section className="py-20 md:py-24 bg-[#FDFDFD]">
+            <div className="container px-4">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 px-2">
+                    <div className="space-y-3 max-w-2xl">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-px bg-primary" />
+                            <span className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.3em]">Handpicked Collections</span>
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-secondary tracking-tighter uppercase leading-none font-heading">
+                           Curated Collections
+                        </h2>
+                        <p className="text-[10px] md:text-[11px] font-medium text-secondary/40 uppercase tracking-widest max-w-md">
+                           Curated styles from the best of Indian craftsmanship.
+                        </p>
+                    </div>
+                    
+                    <button onClick={() => navigate('/category/all')} className="hidden md:flex items-center gap-3 group">
+                        <span className="text-[9px] font-black text-secondary uppercase tracking-[0.2em] group-hover:text-primary transition-colors">See All</span>
+                        <div className="w-10 h-10 rounded-full border border-secondary/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300 group-hover:translate-x-1">
+                            <ArrowRight size={14} />
+                        </div>
+                    </button>
+                </div>
+
+                {/* Compact Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+                    {categories.slice(0, 8).map((cat, i) => (
+                        <motion.div
+                            key={cat.id}
+                            initial={{ opacity: 0, y: 15 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.05 }}
+                            onClick={() => navigate(`/category/${cat.id}`)}
+                            className="group relative h-[250px] md:h-[320px] rounded-[2rem] overflow-hidden cursor-pointer shadow-xl shadow-slate-100"
+                        >
+                            {/* Background Image with Overlay */}
+                            <img 
+                                src={cat.img || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2000"} 
+                                alt={cat.name} 
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-secondary/10 to-transparent opacity-40 group-hover:opacity-70 transition-opacity duration-300" />
+                            
+                            {/* Tag */}
+                            <div className="absolute top-5 left-5">
+                                <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
+                                    <Star size={8} className="fill-yellow-400 text-yellow-400" />
+                                    <span className="text-[7px] font-black text-white uppercase tracking-widest">{getCollectionTag(i)}</span>
+                                </div>
+                            </div>
+
+                            {/* Info */}
+                            <div className="absolute inset-x-6 bottom-6 space-y-2">
+                                <div className="space-y-0.5">
+                                    <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tighter leading-none font-heading">
+                                        {cat.name}
+                                    </h3>
+                                    <p className="text-[8px] md:text-[9px] font-bold text-white/50 uppercase tracking-widest">
+                                        Explore Items
+                                    </p>
+                                </div>
+
+                                <div className="pt-2 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+                                        <ArrowRight size={10} />
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Mobile Button */}
+                <div className="mt-10 md:hidden flex justify-center">
+                    <button onClick={() => navigate('/category/all')} className="w-full bg-secondary text-white py-4 rounded-xl font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-secondary/10">
+                        See All Collections
+                    </button>
+                </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+        </section>
+    );
 };
 
 export default CategorySelector;

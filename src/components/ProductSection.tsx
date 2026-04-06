@@ -1,84 +1,138 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, ShoppingBag, Heart } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { ShoppingBag, Star, Heart, ChevronRight, TrendingUp } from 'lucide-react';
+import { dataService } from '../dataService';
+import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
-const products = [
-  { name: "Smart Phone 12", price: "₹79,999", oldPrice: "₹89,999", rating: 4.8, img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=2080&auto=format&fit=crop", badge: "HOT" },
-  { name: "Maxosi Microwave Oven", price: "₹12,499", oldPrice: "₹15,999", rating: 4.9, img: "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?q=80&w=2070&auto=format&fit=crop" },
-  { name: "Omex Blender", price: "₹4,199", oldPrice: "₹5,499", rating: 4.7, img: "https://images.unsplash.com/photo-1584286595398-a59f21d313f5?q=80&w=1964&auto=format&fit=crop" },
-  { name: "LF 7 Pro Console", price: "₹42,999", oldPrice: "₹49,999", rating: 4.9, img: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop", badge: "NEW" },
-  { name: "Xonix CC Camera", price: "₹8,599", oldPrice: "₹10,999", rating: 4.6, img: "https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=2071&auto=format&fit=crop" },
-  { name: "Mango Router", price: "₹2,499", oldPrice: "₹3,999", rating: 4.5, img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=2070&auto=format&fit=crop" },
-  { name: "Oke Water Purifier", price: "₹15,999", oldPrice: "₹18,499", rating: 4.7, img: "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?q=80&w=1932&auto=format&fit=crop" },
-  { name: "Macbook Pro 16", price: "₹1,84,900", oldPrice: "₹1,99,900", rating: 4.9, img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1926&auto=format&fit=crop", badge: "SALE" }
-];
+interface ProductSectionProps {
+  title: string;
+}
 
-const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }) => {
+const ProductSection: React.FC<ProductSectionProps> = ({ title }) => {
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  useEffect(() => {
+    const fetch = async () => {
+      setLoading(true);
+      let data = [];
+      if (title.includes('Highly Recommended')) {
+        data = await dataService.getHighlyRecommended();
+      } else if (title.includes('Best Selling')) {
+        data = await dataService.getBestSelling();
+      } else {
+        data = await dataService.getRecommendedProducts();
+      }
+      setProducts(data);
+      setLoading(false);
+    };
+    fetch();
+  }, [title]);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-white overflow-hidden">
+        <div className="container px-4">
+           <div className="h-10 w-64 bg-slate-50 rounded-xl animate-pulse mb-8" />
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="aspect-[3/4] bg-slate-50 rounded-[2.5rem] animate-pulse" />
+              ))}
+           </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="py-12 md:py-24 bg-background px-4 md:px-0">
-      <div className="container">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6">
-          <div className="max-w-xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary uppercase tracking-tighter mb-4 font-heading">{title}</h2>
-            <p className="text-sm md:text-base text-muted font-medium leading-relaxed">{subtitle}</p>
+    <section className="py-24 bg-white overflow-hidden relative">
+      <div className="container px-4 md:px-0">
+        <div className="flex items-end justify-between mb-12 px-2">
+          <div className="space-y-2">
+            {title.includes('Best Selling') && (
+              <div className="flex items-center gap-2 text-primary font-black uppercase tracking-[0.3em] text-[10px]">
+                <TrendingUp size={14} /> Market Favorites
+              </div>
+            )}
+            {title.includes('Highly Recommended') && (
+              <div className="flex items-center gap-2 text-amber-500 font-black uppercase tracking-[0.3em] text-[10px]">
+                <Star size={14} /> Premium Choice
+              </div>
+            )}
+            <h2 className="text-4xl font-black text-secondary tracking-tighter uppercase font-heading leading-tight">
+              {title.split(' ')[0]} <span className="text-primary italic">{title.split(' ').slice(1).join(' ')}</span>
+            </h2>
           </div>
-          <button className="bg-white border border-secondary/10 px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-secondary hover:text-white transition-all">
-            View All
-          </button>
+          <Link to="/category/all" className="hidden md:flex items-center gap-2 text-secondary/40 hover:text-primary font-bold text-xs uppercase tracking-widest transition-all group">
+            View All <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-6 md:gap-y-12">
-          {products.map((product, idx) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+          {products.map((product) => (
             <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
+              key={product.id}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="group relative"
+              className="group flex flex-col gap-6"
             >
-              <div className="aspect-[3/4] rounded-[2rem] bg-white border border-secondary/5 overflow-hidden relative mb-5 md:mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500">
-                <img 
-                  src={product.img} 
-                  alt={product.name} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                
+              <div className={cn(
+                "aspect-[3/4] rounded-[2.5rem] border overflow-hidden relative shadow-sm group-hover:shadow-2xl transition-all duration-700",
+                product.badge === 'Highly Recommended' ? "bg-amber-50/10 border-amber-50" : "bg-white border-gray-100"
+              )}>
+                <Link to={`/product/${product.id}`} className="block h-full w-full">
+                  <img
+                    src={product.img}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                  />
+                </Link>
+
+                {/* Status Badges */}
                 {product.badge && (
-                  <div className="absolute top-4 md:top-6 left-4 md:left-6 bg-primary text-white text-[8px] md:text-[9px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest">
-                    {product.badge}
-                  </div>
+                   <div className={cn(
+                     "absolute top-6 left-6 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full border shadow-xl backdrop-blur-md z-10",
+                     product.badge === 'Highly Recommended' ? "bg-amber-400 text-amber-950 border-white/20" : "bg-slate-900/90 text-white border-white/10"
+                   )}>
+                      {product.badge}
+                   </div>
                 )}
 
-                <div className="absolute top-4 md:top-6 right-4 md:right-6 flex flex-col gap-3 lg:translate-x-12 lg:opacity-0 lg:group-hover:translate-x-0 lg:group-hover:opacity-100 transition-all duration-500">
-                  <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-secondary/40 hover:text-primary hover:shadow-xl shadow-md transition-all">
-                    <Heart className="h-4 w-4" />
-                  </button>
-                </div>
-
-                <div className="absolute inset-x-4 md:inset-x-6 bottom-4 md:bottom-6 lg:translate-y-20 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-500">
-                  <button className="w-full bg-primary text-white py-3 md:py-4 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 md:gap-3 shadow-2xl shadow-primary/40 active:scale-95 transition-all">
-                    <ShoppingBag className="h-4 w-4" />
-                    Add to Cart
+                <div className="absolute inset-x-6 bottom-6 opacity-0 group-hover:opacity-100 translate-y-6 group-hover:translate-y-0 transition-all duration-500 z-10">
+                  <button 
+                    onClick={() => addToCart(product)}
+                    className="w-full bg-slate-900 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-primary transition-all active:scale-95"
+                  >
+                    Quick Add
                   </button>
                 </div>
               </div>
 
-              <div className="px-2 md:px-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex items-center">
-                    {[1, 2, 3, 4, 5].map(s => (
-                      <Star key={s} className={cn("h-3 w-3", s <= 4 ? "fill-primary text-primary" : "text-gray-200")} />
-                    ))}
-                  </div>
-                  <span className="text-[9px] md:text-[10px] font-bold text-muted uppercase">({product.rating})</span>
+              <div className="space-y-2 px-2">
+                <div className="flex justify-between items-start gap-4">
+                  <h3 className="text-sm font-black text-secondary uppercase tracking-tight leading-tight group-hover:text-primary transition-colors truncate">
+                    {product.name}
+                  </h3>
+                  <button 
+                    onClick={() => toggleWishlist(product)}
+                    className={cn(
+                      "transition-all duration-300 transform active:scale-150 shrink-0",
+                      isInWishlist(product.id) ? "text-rose-500 animate-pulse" : "text-slate-200 hover:text-rose-400"
+                   )}>
+                    <Heart 
+                      size={18} 
+                      fill={isInWishlist(product.id) ? "currentColor" : "none"} 
+                      strokeWidth={2.5} 
+                    />
+                  </button>
                 </div>
-                <h3 className="text-sm md:text-base font-bold text-secondary uppercase tracking-tighter mb-2 group-hover:text-primary transition-colors font-heading">
-                  {product.name}
-                </h3>
                 <div className="flex items-center gap-3">
-                  <span className="text-base md:text-lg font-bold text-secondary">{product.price}</span>
-                  <span className="text-xs md:text-sm font-semibold text-muted/60 line-through italic">{product.oldPrice}</span>
+                   <p className="text-lg font-black text-secondary font-heading leading-none">₹{Number(product.price).toLocaleString()}</p>
                 </div>
               </div>
             </motion.div>
@@ -88,5 +142,9 @@ const ProductSection = ({ title, subtitle }: { title: string, subtitle: string }
     </section>
   );
 };
+
+function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}
 
 export default ProductSection;

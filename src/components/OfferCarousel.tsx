@@ -1,39 +1,19 @@
 import { motion } from 'framer-motion';
-
-const offers = [
-  {
-    id: 1,
-    title: "Summer Collection",
-    discount: "Up to 50% Off",
-    img: "/offer_summer_sale.png",
-    color: "bg-orange-50"
-  },
-  {
-    id: 2,
-    title: "Tech Revolution",
-    discount: "Latest Gadgets",
-    img: "/offer_tech_gadgets.png",
-    color: "bg-blue-50"
-  },
-  {
-    id: 3,
-    title: "Home Decor",
-    discount: "Premium Quality",
-    img: "/offer_home_decor.png",
-    color: "bg-green-50"
-  },
-  {
-    id: 4,
-    title: "New Arrivals",
-    discount: "Trending Now",
-    img: "/offer_new_arrivals.png",
-    color: "bg-purple-50"
-  }
-];
+import { useEffect, useState } from 'react';
+import { dataService } from '../dataService';
 
 const OfferCarousel = () => {
-  // To create a seamless loop, we duplicate the items
-  const duplicatedOffers = [...offers, ...offers];
+  const [banners, setBanners] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+       const data = await dataService.getBanners();
+       setBanners(data);
+    };
+    fetchBanners();
+  }, []);
+
+  const duplicatedOffers = [...banners, ...banners];
 
   return (
     <section className="py-8 md:py-12 bg-white overflow-hidden">

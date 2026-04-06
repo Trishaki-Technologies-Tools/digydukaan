@@ -1,5 +1,6 @@
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';
+import CategoryScroll from '../components/CategoryScroll';
 import OfferCarousel from '../components/OfferCarousel';
 import Features from '../components/Features';
 import PromoCards from '../components/PromoCards';
@@ -16,53 +17,54 @@ const Home = () => {
     <div className="min-h-screen bg-white font-sans selection:bg-blue-500 selection:text-white pb-20 md:pb-0">
       <TopBar />
       <Navbar />
+      <CategoryScroll />
       <OfferCarousel />
       <CategorySelector />
       <Features />
       <PromoCards />
-      
+
       {/* Highly Recommended Section */}
-      <ProductSection 
-        title="Highly Recommended" 
+      <ProductSection
+        title="Highly Recommended"
         subtitle="Exclusive products continue to drive innovation and shape the way we live, work, and interact with our environment."
       />
-      
+
       {/* Running Marquee / Divider in Image */}
       <div className="bg-slate-900 py-6 overflow-hidden border-y border-white/5 relative">
-         <div className="flex items-center whitespace-nowrap marquee">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-12 px-6">
-                 <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Await!</span>
-                 <span className="text-blue-500 font-bold opacity-40">+</span>
-                 <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Smart Shopping!</span>
-                 <span className="text-blue-500 font-bold opacity-40">+</span>
-                 <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Shop More, Save More!</span>
-                 <span className="text-blue-500 font-bold opacity-40">+</span>
-              </div>
-            ))}
-         </div>
+        <div className="flex items-center whitespace-nowrap marquee">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-12 px-6">
+              <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Await!</span>
+              <span className="text-blue-500 font-bold opacity-40">+</span>
+              <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Smart Shopping!</span>
+              <span className="text-blue-500 font-bold opacity-40">+</span>
+              <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Shop More, Save More!</span>
+              <span className="text-blue-500 font-bold opacity-40">+</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <BannerCollage />
 
       {/* Best Selling Product Section */}
-      <ProductSection 
-        title="Best Selling Products" 
+      <ProductSection
+        title="Best Selling Products"
         subtitle="Our most loved items based on customer feedback and sales performance over the last quarter."
       />
 
       {/* Another Marquee (slightly different) */}
       <div className="bg-slate-900 py-6 overflow-hidden border-y border-white/5 relative">
-         <div className="flex items-center whitespace-nowrap marquee">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-12 px-6">
-                 <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Unbelievable Discounts!</span>
-                 <span className="text-blue-500 font-bold opacity-40">+</span>
-                 <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Welcome to DigyDukaan</span>
-                 <span className="text-blue-500 font-bold opacity-40">+</span>
-              </div>
-            ))}
-         </div>
+        <div className="flex items-center whitespace-nowrap marquee">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-12 px-6">
+              <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Unbelievable Discounts!</span>
+              <span className="text-blue-500 font-bold opacity-40">+</span>
+              <span className="text-white font-black text-sm uppercase tracking-[0.4em] italic opacity-40">Welcome to DigyDukaan</span>
+              <span className="text-blue-500 font-bold opacity-40">+</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <Testimonials />
