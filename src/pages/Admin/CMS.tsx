@@ -1,3 +1,4 @@
+/* PRODUCTION FORCE-SYNC: VERSION 1.0.1 - CLEARING BUILD CACHE */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -6,12 +7,12 @@ import {
   Image as ImageIcon, 
   PenTool, 
   ChevronRight,
-  Plus,
   Eye,
   Trash2,
   Globe,
   Monitor,
-  Smartphone
+  Smartphone,
+  Plus
 } from 'lucide-react';
 
 
