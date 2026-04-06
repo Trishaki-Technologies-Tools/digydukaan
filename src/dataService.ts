@@ -131,6 +131,30 @@ export const dataService = {
     return { data: data.publicUrl, error: null };
   },
 
+  // ADMIN EXTENSIONS
+  async getCustomers() {
+     if (!isSupabaseConfigured()) return [];
+     const { data } = await supabase.from('orders').select('customer_email, customer_name, customer_phone').order('created_at', { ascending: false });
+     const unique = Array.from(new Set((data || []).map(c => c.customer_email))).map(email => {
+        return (data || []).find(c => c.customer_email === email);
+     });
+     return unique || [];
+  },
+
+  async getVendors() {
+     return []; // Placeholder for now
+  },
+
+  async addCategory(category: any) {
+     if (!isSupabaseConfigured()) return { error: 'Not Configured' };
+     return await supabase.from('categories').insert([category]);
+  },
+
+  async updateCategory(id: string, category: any) {
+     if (!isSupabaseConfigured()) return { error: 'Not Configured' };
+     return await supabase.from('categories').update(category).eq('id', id);
+  },
+
   // 5. ATOMIC PURE INSERT: FULL CATALOG RESTORATION
   async forceSeedProducts() {
     if (!isSupabaseConfigured()) return { error: 'Not Configured' };

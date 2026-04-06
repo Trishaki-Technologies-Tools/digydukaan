@@ -4,7 +4,6 @@ import {
   Plus, 
   Search, 
   Filter, 
-  MoreVertical, 
   Edit2, 
   Trash2, 
   Eye, 
@@ -14,8 +13,6 @@ import {
   AlertCircle,
   X,
   ExternalLink,
-  ShoppingBag,
-  Star as StarIcon,
   Tag,
   Loader2
 } from 'lucide-react';
@@ -50,7 +47,8 @@ const ProductsList = () => {
      if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
         const { error } = await dataService.deleteProduct(id);
         if (error) {
-           alert('Error deleting product: ' + error.message);
+           const errorMsg = typeof error === 'string' ? error : (error as any).message || 'Unknown error';
+           alert('Error deleting product: ' + errorMsg);
         } else {
            fetchData();
         }

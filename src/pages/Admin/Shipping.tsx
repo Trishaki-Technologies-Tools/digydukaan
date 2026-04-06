@@ -2,17 +2,16 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Truck, 
-  MapPin, 
   Search, 
   Package, 
   Printer, 
   ChevronRight,
-  ExternalLink,
   Navigation,
   CheckCircle2,
   Clock,
   Box,
-  TruckIcon
+  TruckIcon,
+  ExternalLink
 } from 'lucide-react';
 import { dataService } from '../../dataService';
 

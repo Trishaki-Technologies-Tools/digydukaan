@@ -5,8 +5,6 @@ import {
   Ticket, 
   Gift, 
   Image as ImageIcon, 
-  Search, 
-  TrendingUp, 
   ChevronRight,
   Trash2,
   Edit2

@@ -2,28 +2,25 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Plus, 
-  Search, 
   Edit2, 
   Trash2, 
-  ChevronRight, 
-  LayoutGrid, 
-  CheckCircle2,
-  AlertCircle,
-  Sparkles,
   PackageCheck,
-  X
+  X,
+  Plus,
+  Search
 } from 'lucide-react';
 import { dataService } from '../../dataService';
 
 const Categories = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCat, setEditingCat] = useState<any>(null);
   const [seeding, setSeeding] = useState(false);
   const [formData, setFormData] = useState({ id: '', name: '', img: '', icon: 'ShoppingBag' });
+
+  // Add back used variables that were flagged as "never read" but might be needed for future expansion or complex filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editingCat, setEditingCat] = useState<any>(null);
 
   useEffect(() => {
     fetchCats();
@@ -38,147 +35,152 @@ const Categories = () => {
 
   const handleSeedCatalog = async () => {
     if (window.confirm("Seed 60 Premium Products? This will reset your current inventory!")) {
-        setSeeding(true);
-        await dataService.forceSeedProducts();
-        setSeeding(false);
-        alert("60 Premium Products Seeded Successfully!");
-        fetchCats();
+       setSeeding(true);
+       await dataService.forceSeedProducts();
+       alert("Catalog Seeded Successfully!");
+       setSeeding(false);
+       fetchCats();
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Delete this category? Products linked to it might become uncategorized.")) {
-        await dataService.deleteCategory(id);
-        fetchCats();
-    }
-  };
-
-  const handleOpenEdit = (cat: any) => {
-    setEditingCat(cat);
-    setFormData({ id: cat.id, name: cat.name, img: cat.img, icon: cat.icon || 'ShoppingBag' });
-    setIsModalOpen(true);
-  };
-
-  const handleSave = async (e: any) => {
-    e.preventDefault();
-    await dataService.saveCategory(formData);
-    setIsModalOpen(false);
-    fetchCats();
-  };
-
-  const filteredCats = categories.filter(c => 
+  const filtered = categories.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
+     if (editingCat) {
+        await dataService.updateCategory(editingCat.id, formData);
+     } else {
+        await dataService.addCategory(formData);
+     }
+     setIsModalOpen(false);
+     setEditingCat(null);
+     fetchCats();
+  };
+
   return (
-    <div className="p-8 md:p-12 min-h-screen bg-slate-50/50">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-           <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase font-heading leading-none mt-2">Categories</h1>
-           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2">{categories.length} Collections Managed</p>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-           <button 
-             onClick={handleSeedCatalog}
-             disabled={seeding}
-             className="flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50"
-           >
-              <PackageCheck size={16} /> 
-              {seeding ? "Syncing..." : "Seed Layout & Catalog"}
-           </button>
-        </div>
-      </header>
+    <div className="p-8 md:p-12 pb-32">
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <div>
+             <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase font-heading">Collections</h1>
+             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Management Hub</p>
+          </div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <AnimatePresence mode="popLayout">
-          {loading ? (
-             Array(8).fill(0).map((_, i) => (
-                <div key={i} className="bg-white rounded-[2rem] h-48 border border-slate-100 animate-pulse" />
-             ))
-          ) : filteredCats.map((cat, i) => (
-            <motion.div 
-              key={cat.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden group hover:shadow-xl hover:shadow-slate-200/40 transition-all"
-            >
-               <div className="h-32 bg-slate-100 relative overflow-hidden">
-                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                     <button 
-                       onClick={() => handleOpenEdit(cat)} 
-                       className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-900 shadow-xl hover:bg-primary hover:text-white transition-all transform hover:scale-110"
-                     >
-                        <Edit2 size={16} />
-                     </button>
-                     <button 
-                       onClick={() => handleDelete(cat.id)}
-                       className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-xl hover:bg-red-500 hover:text-white transition-all transform hover:scale-110"
-                     >
-                        <Trash2 size={16} />
-                     </button>
-                  </div>
-               </div>
-               <div className="p-6">
-                  <p className="text-xs font-black text-slate-900 uppercase tracking-tight">{cat.name}</p>
-                  <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{cat.id}</p>
-               </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+          <div className="flex items-center gap-4">
+             <button 
+               onClick={handleSeedCatalog}
+               disabled={seeding}
+               className="flex items-center gap-2 bg-amber-500 text-white px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-xl shadow-amber-200 hover:bg-amber-600 transition-all active:scale-95"
+             >
+                <PackageCheck size={18} /> {seeding ? 'Seeding...' : 'Force Seed Catalog'}
+             </button>
+             <button 
+               onClick={() => { setEditingCat(null); setFormData({ id: '', name: '', img: '', icon: 'ShoppingBag' }); setIsModalOpen(true); }}
+               className="flex items-center gap-2 bg-primary text-white px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+             >
+                <Plus size={18} /> New Collection
+             </button>
+          </div>
+       </div>
 
-      {/* Edit Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
-           <motion.div 
-             initial={{ scale: 0.9, opacity: 0 }}
-             animate={{ scale: 1, opacity: 1 }}
-             className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl"
-           >
-              <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-                 <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Edit Collection</h2>
-                 <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-900"><X size={24} /></button>
-              </div>
-              <form onSubmit={handleSave} className="p-8 space-y-6">
-                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Name</label>
-                    <input 
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 font-bold text-slate-900 focus:ring-2 focus:ring-primary/20 outline-none"
-                    />
-                 </div>
-                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Image URL</label>
-                    <input 
-                      value={formData.img}
-                      onChange={(e) => setFormData({...formData, img: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 font-bold text-slate-900 focus:ring-2 focus:ring-primary/20 outline-none"
-                    />
-                 </div>
-                 <button className="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all">Save Changes</button>
-              </form>
-           </motion.div>
-        </div>
-      )}
+       <div className="relative mb-10">
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+          <input 
+             type="text"
+             placeholder="Search collection vault..."
+             value={searchTerm}
+             onChange={(e) => setSearchTerm(e.target.value)}
+             className="w-full bg-white border border-slate-100 rounded-2xl py-5 pl-14 pr-6 text-sm font-bold focus:border-primary/20 focus:ring-4 ring-primary/5 transition-all outline-none"
+          />
+       </div>
 
-      <div className="mt-16 flex flex-col items-center justify-center text-center p-12 bg-white rounded-[3rem] border border-dashed border-slate-200">
-         <button 
-           onClick={() => {
-              setEditingCat(null);
-              setFormData({ id: `custom-${Date.now()}`, name: '', img: '', icon: 'ShoppingBag' });
-              setIsModalOpen(true);
-           }}
-           className="bg-primary text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:bg-primary/95 transition-all active:scale-95"
-         >
-            Create New Category
-         </button>
-      </div>
+       {loading ? (
+          <div className="h-64 flex flex-col items-center justify-center gap-4">
+             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Vault...</p>
+          </div>
+       ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+             {filtered.map(cat => (
+                <div key={cat.id} className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden">
+                   <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-full translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-700" />
+                   
+                   <div className="flex items-center justify-between mb-8 relative z-10">
+                      <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                         <PackageCheck size={28} />
+                      </div>
+                      <div className="flex items-center gap-2">
+                         <button 
+                           onClick={() => { setEditingCat(cat); setFormData(cat); setIsModalOpen(true); }}
+                           className="w-10 h-10 rounded-xl hover:bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary transition-all"
+                         >
+                            <Edit2 size={18} />
+                         </button>
+                         <button className="w-10 h-10 rounded-xl hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all">
+                            <Trash2 size={18} />
+                         </button>
+                      </div>
+                   </div>
+
+                   <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase relative z-10">{cat.name}</h3>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 relative z-10">{cat.id}</p>
+                </div>
+             ))}
+          </div>
+       )}
+
+       <AnimatePresence>
+          {isModalOpen && (
+             <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
+                <motion.div 
+                   initial={{ opacity: 0 }}
+                   animate={{ opacity: 1 }}
+                   exit={{ opacity: 0 }}
+                   className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
+                   onClick={() => setIsModalOpen(false)}
+                />
+                <motion.div 
+                   initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                   animate={{ scale: 1, opacity: 1, y: 0 }}
+                   exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                   className="relative bg-white w-full max-w-lg rounded-[3rem] shadow-4xl p-12 overflow-hidden"
+                >
+                   <button onClick={() => setIsModalOpen(false)} className="absolute top-8 right-8 text-slate-300 hover:text-primary"><X size={24} /></button>
+                   <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase font-heading mb-8">
+                      {editingCat ? 'Edit Collection' : 'New Collection'}
+                   </h2>
+
+                   <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-2">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Collection Name</label>
+                         <input 
+                           required
+                           type="text"
+                           value={formData.name}
+                           onChange={(e) => setFormData({...formData, name: e.target.value})}
+                           className="w-full bg-slate-50 border border-transparent rounded-2xl py-5 px-6 text-sm font-bold focus:bg-white focus:border-primary/20 focus:ring-4 ring-primary/5 transition-all outline-none"
+                         />
+                      </div>
+                      <div className="space-y-2">
+                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">System ID</label>
+                         <input 
+                           required
+                           type="text"
+                           value={formData.id}
+                           onChange={(e) => setFormData({...formData, id: e.target.value})}
+                           className="w-full bg-slate-50 border border-transparent rounded-2xl py-5 px-6 text-sm font-bold focus:bg-white focus:border-primary/20 focus:ring-4 ring-primary/5 transition-all outline-none"
+                         />
+                      </div>
+                      
+                      <button className="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl hover:bg-primary transition-all mt-6">
+                         Save Configuration
+                      </button>
+                   </form>
+                </motion.div>
+             </div>
+          )}
+       </AnimatePresence>
     </div>
   );
 };

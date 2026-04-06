@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Package, 
   Search, 
   ArrowUp, 
   ArrowDown, 
@@ -9,10 +8,8 @@ import {
   Save, 
   AlertTriangle,
   Boxes,
-  History,
   TrendingDown,
-  Loader2,
-  CheckCircle2
+  Loader2
 } from 'lucide-react';
 import { dataService } from '../../dataService';
 

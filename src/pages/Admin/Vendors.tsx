@@ -6,7 +6,6 @@ import {
   MoreVertical, 
   Plus, 
   Star, 
-  Globe, 
   ChevronRight,
   ShieldCheck,
   Ban,
