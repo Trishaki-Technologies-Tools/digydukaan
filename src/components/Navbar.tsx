@@ -25,12 +25,21 @@ const Navbar = () => {
   const { wishlistCount } = useWishlist();
 
   useEffect(() => {
+    // 1. Check Custom MSG91 Session
+    const localUser = localStorage.getItem('digydukaan_user');
+    if (localUser) {
+       setUser(JSON.parse(localUser));
+    }
+
+    // 2. Check Supabase Session (Legacy/Admin)
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      if (!localUser) setUser(session?.user ?? null);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      if (!localStorage.getItem('digydukaan_user')) {
+         setUser(session?.user ?? null);
+      }
     });
 
     dataService.getProducts().then(data => setAllProducts(data));
@@ -162,19 +171,19 @@ const Navbar = () => {
                 onClick={() => user ? null : setIsAuthModalOpen(true)}
                 className="hidden sm:flex items-center gap-3 px-3 py-2 border border-transparent hover:border-slate-100 hover:bg-slate-50 rounded-xl transition-all"
               >
-                {user ? (
-                   <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-primary/20">
-                      {user.email?.[0].toUpperCase()}
-                   </div>
-                ) : (
-                   <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-secondary/40">
-                      <User size={18} />
-                   </div>
-                )}
-                <div className="hidden lg:flex flex-col items-start leading-none">
-                   <p className="text-[10px] font-black text-secondary/30 uppercase tracking-widest mb-1">Hello, {user ? 'Member' : 'Sign In'}</p>
-                   <p className="text-[11px] font-black text-secondary uppercase">Account Hub</p>
-                </div>
+                 {user ? (
+                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-primary/20 uppercase">
+                       {user.full_name?.[0] || user.phone?.[0] || 'M'}
+                    </div>
+                 ) : (
+                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-secondary/40">
+                       <User size={18} />
+                    </div>
+                 )}
+                 <div className="hidden lg:flex flex-col items-start leading-none">
+                    <p className="text-[10px] font-black text-secondary/30 uppercase tracking-widest mb-1">Hello, {user?.full_name || 'Member'}</p>
+                    <p className="text-[11px] font-black text-secondary uppercase tracking-tighter">{user?.phone || 'Account Hub'}</p>
+                 </div>
               </button>
 
               {user && (

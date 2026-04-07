@@ -134,11 +134,35 @@ export const dataService = {
   // ADMIN EXTENSIONS
   async getCustomers() {
      if (!isSupabaseConfigured()) return [];
-     const { data } = await supabase.from('orders').select('customer_email, customer_name, customer_phone').order('created_at', { ascending: false });
-     const unique = Array.from(new Set((data || []).map(c => c.customer_email))).map(email => {
-        return (data || []).find(c => c.customer_email === email);
-     });
-     return unique || [];
+     const { data } = await supabase.from('profiles').select('*');
+     return data || [];
+  },
+
+  async getOrCreateProfileByPhone(phone: string) {
+     if (!isSupabaseConfigured()) throw new Error('Supabase not configured');
+     
+     // 1. Try to find existing profile
+     const { data: existing } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle();
+        
+     if (existing) return existing;
+     
+     // 2. If not found, create new profile
+     const { data: newUser, error: createError } = await supabase
+        .from('profiles')
+        .insert([{ 
+           phone, 
+           full_name: 'Customer', // Default name
+           created_at: new Date().toISOString()
+        }])
+        .select('*')
+        .single();
+        
+     if (createError) throw createError;
+     return newUser;
   },
 
   async getVendors() {
