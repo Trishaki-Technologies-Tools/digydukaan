@@ -16,7 +16,7 @@ const CategoryScroll = () => {
          
          const cats = uniqueCats
            .filter((name: any) => name.toLowerCase() !== 'home')
-           .map((name: any, i) => ({
+           .map((name: any) => ({
              id: name.toLowerCase(),
              name: name,
              icon: name

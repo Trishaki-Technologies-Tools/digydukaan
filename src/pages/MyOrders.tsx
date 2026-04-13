@@ -15,7 +15,6 @@ import {
   Plus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { dataService } from '../dataService';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';

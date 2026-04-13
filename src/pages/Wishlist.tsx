@@ -1,4 +1,4 @@
-import { ShoppingBag, ChevronLeft, Heart, X, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, Heart, X, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';

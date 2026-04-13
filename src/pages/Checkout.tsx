@@ -4,7 +4,6 @@ import { Truck, CreditCard, ShieldCheck, MapPin, CheckCircle2, Loader2, ArrowLef
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { dataService } from '../dataService';
-import { supabase } from '../lib/supabase';
 import { cn } from '../lib/utils';
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';

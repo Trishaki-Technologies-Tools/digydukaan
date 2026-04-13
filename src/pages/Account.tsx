@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Heart, Ticket, Headset, History, ChevronRight, LogOut, Settings, Package, ShieldCheck } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Heart, Ticket, Headset, History, ChevronRight, LogOut, Settings, Package, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';

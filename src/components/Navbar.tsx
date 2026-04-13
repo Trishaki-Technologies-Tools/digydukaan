@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, Search, User, MapPin, X, Menu, LogOut, Heart, ChevronRight, LayoutGrid, Home as HomeIcon } from 'lucide-react';
+import { ShoppingBag, Search, User, MapPin, X, LogOut, Heart, ChevronRight, LayoutGrid, Home as HomeIcon } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthModal from './AuthModal';
 import CartDrawer from './CartDrawer';
-import { supabase } from '../lib/supabase';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
