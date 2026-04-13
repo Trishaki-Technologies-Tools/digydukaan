@@ -1,9 +1,8 @@
-
 const Footer = () => {
   return (
-    <footer className="border-t border-secondary/5 bg-secondary pt-16 md:pt-24 pb-12 px-6 md:px-0 text-white">
-      <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-y-12 md:gap-x-12 mb-16 md:mb-24">
+    <footer className="border-t border-secondary/5 bg-secondary pt-20 md:pt-32 pb-24 md:pb-16 px-6 md:px-12 text-white mt-auto overflow-hidden">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-y-16 md:gap-x-12 mb-20 md:mb-24">
           {/* Brand Column */}
           <div className="md:col-span-1 lg:col-span-2 text-left">
             <a href="/" className="flex flex-col mb-6">

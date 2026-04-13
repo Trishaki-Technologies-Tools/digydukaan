@@ -143,6 +143,17 @@ export const dataService = {
      return data || [];
   },
 
+  async getProfile(phone: string) {
+     if (!isSupabaseConfigured()) return null;
+     const { data } = await supabase.from('profiles').select('*').eq('phone', phone).maybeSingle();
+     return data;
+  },
+
+  async updateProfile(phone: string, updates: any) {
+     if (!isSupabaseConfigured()) return { error: 'Not Configured' };
+     return await supabase.from('profiles').update(updates).eq('phone', phone).select();
+  },
+
   async getOrCreateProfileByPhone(phone: string) {
      if (!isSupabaseConfigured()) throw new Error('Supabase not configured');
      

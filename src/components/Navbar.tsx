@@ -193,7 +193,14 @@ const Navbar = () => {
               </button>
 
               {user && (
-                 <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                 <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <div className="px-4 py-3 border-b border-slate-50 mb-1">
+                       <p className="text-[10px] font-black text-secondary uppercase tracking-widest truncate">{user.full_name || 'Member'}</p>
+                       <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{user.phone}</p>
+                    </div>
+                    <Link to="/account" className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-secondary/60 hover:text-primary hover:bg-slate-50 transition-all uppercase tracking-widest">
+                       <User size={14} /> Account Details
+                    </Link>
                     <Link to="/orders" className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-secondary/60 hover:text-primary hover:bg-slate-50 transition-all uppercase tracking-widest">
                        <ShoppingBag size={14} /> My Orders
                     </Link>

@@ -71,7 +71,7 @@ const Customers = () => {
                  <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md tracking-widest">+12% Growth</span>
               </div>
               <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Registered Customers</p>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase font-heading">{customers.length} Partners</h3>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase font-heading">{customers.length}</h3>
            </div>
            
            <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
@@ -134,7 +134,7 @@ const Customers = () => {
                    </tr>
                  ) : filteredCustomers.map((customer, i) => (
                    <motion.tr 
-                     key={customer.customer_email}
+                     key={customer.id || customer.customer_email || i}
                      initial={{ opacity: 0, x: -10 }}
                      animate={{ opacity: 1, x: 0 }}
                      transition={{ delay: i * 0.05 }}

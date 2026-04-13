@@ -4,6 +4,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -15,10 +16,10 @@ const Wishlist = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-32">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      <main className="container max-w-lg mx-auto px-6 pt-8">
+      <main className="container max-w-lg mx-auto px-6 pt-8 pb-32">
         <div className="flex items-center gap-4 mb-8">
            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-secondary active:scale-90 transition-all">
               <ChevronLeft size={20} />
@@ -81,6 +82,7 @@ const Wishlist = () => {
            </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };

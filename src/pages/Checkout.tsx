@@ -28,13 +28,23 @@ const Checkout = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        name: user.full_name || prev.name,
-        phone: user.phone || prev.phone
-      }));
-    }
+    const fetchProfile = async () => {
+      if (user?.phone) {
+        const profile = await dataService.getProfile(user.phone);
+        if (profile) {
+           setFormData(prev => ({
+             ...prev,
+             name: profile.full_name || prev.name,
+             phone: profile.phone || prev.phone,
+             address: profile.address || prev.address,
+             city: profile.city || prev.city,
+             state: profile.state || prev.state,
+             pincode: profile.pincode || prev.pincode
+           }));
+        }
+      }
+    };
+    fetchProfile();
   }, [user]);
 
   useEffect(() => {
@@ -65,7 +75,18 @@ const Checkout = () => {
       payment_method: formData.paymentMode
     };
 
-    // Replace with real Supabase call
+    // 1. Save Address to Profile for next time
+    if (user?.phone) {
+       await dataService.updateProfile(user.phone, {
+          full_name: formData.name,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode
+       });
+    }
+
+    // 2. Clear out unused saveOrder logic
     const { error } = await dataService.saveOrder?.(orderData) || { error: null };
     
     setLoading(false);

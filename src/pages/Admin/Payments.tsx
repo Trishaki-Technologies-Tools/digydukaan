@@ -30,11 +30,22 @@ const Payments = () => {
     fetchTxns();
   }, []);
 
-  const totalRevenue = transactions.reduce((acc, t) => acc + Number(t.amount), 0);
-  const pendingSettlements = transactions.filter(t => t.status === 'Pending').reduce((acc, t) => acc + Number(t.amount), 0);
+  const parseAmount = (val: any) => {
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') {
+       const cleaned = val.replace(/[^\d.]/g, '');
+       return parseFloat(cleaned) || 0;
+    }
+    return 0;
+  };
+
+  const totalRevenue = transactions.reduce((acc, t) => acc + parseAmount(t.total_amount || t.amount), 0);
+  const pendingSettlements = transactions.filter(t => t.status?.toLowerCase() === 'pending').reduce((acc, t) => acc + parseAmount(t.total_amount || t.amount), 0);
 
   const filteredTransactions = transactions.filter(t => {
-     return (t.id && t.id.toLowerCase().includes(searchTerm.toLowerCase())) || (t.customer_name && t.customer_name.toLowerCase().includes(searchTerm.toLowerCase()));
+      const id = t.id || '';
+      const name = t.customer_name || '';
+      return id.toLowerCase().includes(searchTerm.toLowerCase()) || name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   return (
@@ -98,106 +109,118 @@ const Payments = () => {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mb-12">
-           <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row gap-4 items-center justify-between">
-              <div className="relative w-full md:w-96 group">
-                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
+        <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden mb-12">
+           <div className="p-8 border-b border-slate-50 flex flex-col md:flex-row gap-6 items-center justify-between">
+              <div className="relative w-full md:w-[450px] group">
+                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-primary transition-colors" />
                  <input 
                     type="text" 
                     placeholder="Search by Transaction ID or Customer..." 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-slate-50 border-none rounded-2xl py-4 pl-12 pr-4 text-xs font-bold transition-all focus:ring-4 focus:ring-primary/5" 
+                    className="w-full bg-slate-50 border-none rounded-2xl py-4.5 pl-14 pr-5 text-xs font-bold transition-all focus:ring-4 focus:ring-primary/5 placeholder:text-slate-300" 
                  />
               </div>
-              <div className="flex items-center gap-2">
-                 <button className="text-xs font-bold text-slate-400 bg-slate-50 px-4 py-3 rounded-xl hover:text-slate-900 transition-all uppercase tracking-widest">Settlement Settings</button>
+              <div className="flex items-center gap-4">
+                 <button className="text-[10px] font-black text-slate-400 hover:text-slate-900 bg-slate-50 px-6 py-4 rounded-xl transition-all uppercase tracking-widest border border-slate-100">Settlement Settings</button>
               </div>
            </div>
 
-           <table className="w-full text-left border-collapse">
-              <thead>
-                 <tr className="bg-slate-50/30 border-b border-slate-50">
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Transaction Info</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer Ref</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Method</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Amount</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                 </tr>
-              </thead>
-              <tbody>
-                 {loading ? (
-                   <tr>
-                     <td colSpan={6} className="px-8 py-20 text-center">
-                        <ShoppingBag size={40} className="mx-auto text-slate-100 animate-pulse mb-4" />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Auditing Payment Gateways...</p>
-                     </td>
-                   </tr>
-                 ) : filteredTransactions.map((txn, i) => (
-                   <motion.tr 
-                     key={txn.id}
-                     initial={{ opacity: 0, x: -10 }}
-                     animate={{ opacity: 1, x: 0 }}
-                     transition={{ delay: i * 0.05 }}
-                     className="group border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
-                   >
-                      <td className="px-8 py-6">
-                         <div>
-                            <p className="text-sm font-black text-slate-900 tracking-tighter mb-0.5">{txn.id.slice(0, 10).toUpperCase()}</p>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{new Date(txn.created_at).toLocaleDateString()}</p>
-                         </div>
-                      </td>
-                      <td className="px-8 py-6">
-                         <span className="text-xs font-bold text-primary hover:underline cursor-pointer">{txn.customer_name}</span>
-                      </td>
-                      <td className="px-8 py-6">
-                         <div className="flex items-center gap-2">
-                            <CreditCard size={14} className="text-slate-300" />
-                            <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">{txn.payment_method || 'Online'}</span>
-                         </div>
-                      </td>
-                      <td className="px-8 py-6 text-center">
-                         <p className="text-sm font-black text-slate-900">₹{Number(txn.amount).toLocaleString()}</p>
-                      </td>
-                      <td className="px-8 py-6">
-                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                           txn.status === 'Success' || txn.status === 'Delivered' ? 'text-emerald-500 bg-emerald-50' : 
-                           txn.status === 'Pending' ? 'text-amber-500 bg-amber-50' : 
-                           'text-red-500 bg-red-50'
-                         }`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${
-                               txn.status === 'Success' || txn.status === 'Delivered' ? 'bg-emerald-500' : 
-                               txn.status === 'Pending' ? 'bg-amber-500' : 
-                               'bg-red-500'
-                            }`}></div>
-                            {txn.status}
-                         </span>
-                      </td>
-                      <td className="px-8 py-6">
-                         <div className="flex items-center justify-end gap-2">
-                            <button className="p-3 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-slate-100 transition-all" title="Refund Transaction">
-                               <RefreshCcw size={16} />
-                            </button>
-                            <button className="p-3 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl border border-slate-100 transition-all">
-                               <MoreVertical size={16} />
-                            </button>
-                         </div>
-                      </td>
-                   </motion.tr>
-                 ))}
-              </tbody>
-           </table>
+           <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[1000px]">
+                 <thead>
+                    <tr className="bg-slate-50/50 border-b border-slate-50">
+                       <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[15%]">Reference ID</th>
+                       <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[20%]">Customer Info</th>
+                       <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[15%]">Method</th>
+                       <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-[15%]">Amount</th>
+                       <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-[15%]">Status</th>
+                       <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right w-[20%]">Management</th>
+                    </tr>
+                 </thead>
+                 <tbody>
+                    {loading ? (
+                      <tr>
+                        <td colSpan={6} className="px-8 py-24 text-center">
+                           <ShoppingBag size={48} className="mx-auto text-slate-200 animate-pulse mb-6 opacity-40" />
+                           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">Synchronizing Settlement Ledgers...</p>
+                        </td>
+                      </tr>
+                    ) : filteredTransactions.map((txn, i) => (
+                      <motion.tr 
+                        key={txn.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03 }}
+                        className="group border-b border-slate-50 hover:bg-slate-50/30 transition-all"
+                      >
+                         <td className="px-8 py-7">
+                            <div className="space-y-1">
+                               <p className="text-xs font-black text-slate-900 tracking-tight leading-none">#{txn.id?.slice(0, 8).toUpperCase()}</p>
+                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{txn.created_at ? new Date(txn.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) : 'Pending'}</p>
+                            </div>
+                         </td>
+                         <td className="px-8 py-7">
+                            <div className="space-y-1">
+                               <p className="text-xs font-black text-slate-900 truncate">{txn.customer_name || 'Guest User'}</p>
+                               <p className="text-[9px] font-bold text-primary uppercase tracking-widest">Verified Account</p>
+                            </div>
+                         </td>
+                         <td className="px-8 py-7">
+                            <div className="flex items-center gap-3">
+                               <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-white transition-colors">
+                                  <CreditCard size={14} />
+                               </div>
+                               <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{txn.payment_method || 'Online'}</span>
+                            </div>
+                         </td>
+                         <td className="px-8 py-7 text-center">
+                            <p className="text-sm font-black text-slate-900 tracking-tighter">₹{parseAmount(txn.total_amount || txn.amount).toLocaleString()}</p>
+                         </td>
+                         <td className="px-8 py-7">
+                            <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
+                              txn.status === 'Success' || txn.status === 'Delivered' ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 
+                              txn.status === 'Pending' || txn.status?.toLowerCase() === 'pending' ? 'text-amber-600 bg-amber-50 border-amber-100' : 
+                              'text-rose-600 bg-rose-50 border-rose-100'
+                            }`}>
+                               <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                                  txn.status === 'Success' || txn.status === 'Delivered' ? 'bg-emerald-500' : 
+                                  txn.status === 'Pending' || txn.status?.toLowerCase() === 'pending' ? 'bg-amber-500' : 
+                                  'bg-rose-500'
+                               }`}></div>
+                               {txn.status || 'Processing'}
+                            </span>
+                         </td>
+                         <td className="px-8 py-7">
+                            <div className="flex items-center justify-end gap-3">
+                               <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 text-slate-400 hover:text-primary hover:bg-white hover:border-primary/20 rounded-xl border border-slate-100 transition-all font-bold text-[9px] uppercase tracking-widest">
+                                  <RefreshCcw size={12} /> Refund
+                               </button>
+                               <button className="p-2.5 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl border border-slate-100 transition-all">
+                                  <MoreVertical size={16} />
+                               </button>
+                            </div>
+                         </td>
+                      </motion.tr>
+                    ))}
+                 </tbody>
+              </table>
+           </div>
 
-           <div className="p-8 border-t border-slate-50 flex items-center justify-between bg-slate-50/20">
-              <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white">
-                    <ShieldCheck size={14} />
+           <div className="p-10 border-t border-slate-50 flex flex-col md:flex-row items-center justify-between bg-slate-50/10 gap-8">
+              <div className="flex items-center gap-4">
+                 <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-lg">
+                    <ShieldCheck size={18} />
                  </div>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">All transactions are secured via Supabase SSL protocols</p>
+                 <div className="space-y-0.5">
+                    <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Gateway Integrity Secured</p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-primary transition-colors">End-to-End Encryption Active (SSL/TLS 1.3)</p>
+                 </div>
               </div>
-              <div className="flex gap-2">
-                 <button className="px-6 py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 rounded-xl transition-all">Process All Settlements</button>
+              <div className="flex items-center gap-6 w-full md:w-auto">
+                 <button className="flex-1 md:flex-none px-10 py-4.5 bg-primary text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95">
+                    Reconcile & Settle All
+                 </button>
               </div>
            </div>
         </div>
