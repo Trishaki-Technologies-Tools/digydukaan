@@ -19,19 +19,13 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-
-  // PERSISTENCE: Loading from local storage
-  useEffect(() => {
+  const [wishlist, setWishlist] = useState<WishlistItem[]>(() => {
     const saved = localStorage.getItem('digydukaan_wishlist');
     if (saved) {
-      try {
-        setWishlist(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse wishlist:', e);
-      }
+      try { return JSON.parse(saved); } catch (e) { return []; }
     }
-  }, []);
+    return [];
+  });
 
   // PERSISTENCE: Saving to local storage
   useEffect(() => {

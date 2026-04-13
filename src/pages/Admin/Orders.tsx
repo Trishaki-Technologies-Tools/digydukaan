@@ -172,7 +172,7 @@ const Orders = () => {
                   <div className="pt-8 border-t border-slate-50 space-y-4">
                      <div className="flex items-center justify-between text-slate-400 text-[10px] font-black uppercase tracking-widest">
                        <span>Subtotal</span>
-                       <span>₹{Number(order.amount).toLocaleString()}</span>
+                       <span>₹{Number(order.total_amount || order.amount || 0).toLocaleString()}</span>
                      </div>
                      <div className="flex items-center justify-between text-slate-400 text-[10px] font-black uppercase tracking-widest">
                        <span>Delivery Charges</span>
@@ -182,7 +182,7 @@ const Orders = () => {
                        <h3 className="uppercase tracking-tighter">Total Due</h3>
                        <div className="flex items-center gap-2">
                          <span className="text-primary"><IndianRupee size={20} /></span>
-                         <span>{Number(order.amount).toLocaleString()}</span>
+                         <span>{Number(order.total_amount || order.amount || 0).toLocaleString()}</span>
                        </div>
                      </div>
                   </div>
@@ -434,7 +434,7 @@ const Orders = () => {
                            </td>
                            <td className="px-8 py-6 text-center">
                               <div className="inline-block">
-                                 <p className="text-sm font-black text-slate-900">₹{Number(order.amount).toLocaleString()}</p>
+                                 <p className="text-sm font-black text-slate-900">₹{Number(order.total_amount || order.amount || 0).toLocaleString()}</p>
                                  <div className="flex items-center justify-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
                                     <CreditCard size={10} />
                                     <span className="text-[9px] font-bold uppercase tracking-widest">{order.payment_method || "Online"}</span>

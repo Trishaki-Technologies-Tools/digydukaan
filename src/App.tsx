@@ -4,6 +4,8 @@ import ProductDetails from './pages/ProductDetails';
 import CategoryListing from './pages/CategoryListing';
 import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
+import Account from './pages/Account';
+import Wishlist from './pages/Wishlist';
 import AdminLogin from './pages/Admin/Login';
 import AdminDashboard from './pages/Admin/Dashboard';
 import ProductsList from './pages/Admin/ProductsList';
@@ -15,18 +17,22 @@ import './index.css';
 
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <Router>
-      <WishlistProvider>
-        <CartProvider>
+      <AuthProvider>
+        <WishlistProvider>
+          <CartProvider>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/category/:id" element={<CategoryListing />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/orders" element={<MyOrders />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
@@ -36,10 +42,13 @@ function App() {
               <Route path="products/edit/:id" element={<AddProduct />} />
               <Route path="categories" element={<Categories />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="orders/:status" element={<Orders />} />
+              <Route path="orders/details/:id" element={<Orders />} />
             </Route>
           </Routes>
         </CartProvider>
       </WishlistProvider>
+      </AuthProvider>
     </Router>
   );
 }

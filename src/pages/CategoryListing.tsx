@@ -5,6 +5,7 @@ import { ShoppingBag, Heart, ChevronRight, Loader2, SlidersHorizontal, Square, C
 import { dataService } from '../dataService';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { cn } from '../lib/utils';
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';
 import CategoryScroll from '../components/CategoryScroll';
@@ -227,9 +228,5 @@ const CategoryListing = () => {
         </div>
     );
 };
-
-function cn(...classes: string[]) {
-    return classes.filter(Boolean).join(' ');
-}
 
 export default CategoryListing;

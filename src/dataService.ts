@@ -111,7 +111,12 @@ export const dataService = {
   },
   async getOrdersByEmail(email: string) {
     if (!isSupabaseConfigured() || !email) return [];
-    const { data } = await supabase.from('orders').select('*').eq('email', email).order('created_at', { ascending: false });
+    const { data } = await supabase.from('orders').select('*').eq('customer_email', email).order('created_at', { ascending: false });
+    return data || [];
+  },
+  async getOrdersByPhone(phone: string) {
+    if (!isSupabaseConfigured() || !phone) return [];
+    const { data } = await supabase.from('orders').select('*').eq('customer_phone', phone).order('created_at', { ascending: false });
     return data || [];
   },
   async updateOrderStatus(id: string, status: string) { return await supabase.from('orders').update({ status }).eq('id', id).select(); },

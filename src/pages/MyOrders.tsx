@@ -21,6 +21,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { cn } from '../lib/utils';
 
 const OrderStatusBadge = ({ status }: { status: string }) => {
   const getColors = () => {
@@ -46,28 +48,37 @@ const MyOrders = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isGuest, setIsGuest] = useState(false);
-    
+    const { user, loading: authLoading } = useAuth();
     const { wishlist, toggleWishlist } = useWishlist();
     const { addToCart } = useCart();
 
     useEffect(() => {
-        const fetchUserAndOrders = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
+        const fetchOrders = async () => {
+            if (authLoading) return;
+            
+            if (!user) {
                 setIsGuest(true);
                 setActiveTab('wishlist');
                 setLoading(false);
                 return;
             }
-            const userEmail = session.user.email;
-            if (userEmail) {
-                const data = await dataService.getOrdersByEmail?.(userEmail) || [];
+
+            setIsGuest(false);
+            try {
+                let data = [];
+                if (user.phone) {
+                    data = await dataService.getOrdersByPhone(user.phone);
+                } else if (user.email) {
+                    data = await dataService.getOrdersByEmail(user.email);
+                }
                 setOrders(data);
+            } catch (error) {
+                console.error("Order fetch error:", error);
             }
             setLoading(false);
         };
-        fetchUserAndOrders();
-    }, []);
+        fetchOrders();
+    }, [user, authLoading]);
 
     const getStatusStep = (status: string) => {
         const s = status?.toLowerCase();
@@ -162,7 +173,7 @@ const MyOrders = () => {
                                             </div>
                                             <div className="space-y-1">
                                                 <p className="text-[9px] font-black text-secondary/30 uppercase tracking-widest">Total Amount</p>
-                                                <p className="text-sm font-black text-primary">₹{Number(order.amount).toLocaleString()}</p>
+                                                <p className="text-sm font-black text-primary">₹{Number(order.total_amount || order.amount || 0).toLocaleString()}</p>
                                             </div>
                                         </div>
                                         <OrderStatusBadge status={order.status} />
@@ -268,9 +279,5 @@ const MyOrders = () => {
         </div>
     );
 };
-
-function cn(...classes: any[]) {
-    return classes.filter(Boolean).join(' ');
-}
 
 export default MyOrders;

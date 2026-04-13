@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Star, ShoppingBag, Heart, Truck, RotateCcw, ChevronRight, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, ShoppingBag, Heart, Truck, RotateCcw, ChevronRight, Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { dataService } from '../dataService';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { cn } from '../lib/utils';
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -15,9 +16,16 @@ const ProductDetails = () => {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [isZoomed, setIsZoomed] = useState(false);
   
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const handleBuyNow = () => {
+    addToCart({ ...product, quantity });
+    navigate('/checkout');
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,6 +35,14 @@ const ProductDetails = () => {
       setProduct(data);
       setLoading(false);
       window.scrollTo(0, 0);
+
+      // Track History (Recently Viewed)
+      if (data) {
+        const history = JSON.parse(localStorage.getItem('recently_viewed') || '[]');
+        const filtered = history.filter((p: any) => p.id !== data.id);
+        const newHistory = [data, ...filtered].slice(0, 10);
+        localStorage.setItem('recently_viewed', JSON.stringify(newHistory));
+      }
     };
     fetchProduct();
   }, [id]);
@@ -57,6 +73,29 @@ const ProductDetails = () => {
       <TopBar />
       <Navbar />
 
+      <AnimatePresence>
+        {isZoomed && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsZoomed(false)}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+          >
+             <button className="absolute top-8 right-8 text-white/40 hover:text-white transition-colors">
+                <X size={32} />
+             </button>
+             <motion.img 
+               initial={{ scale: 0.9, y: 20 }}
+               animate={{ scale: 1, y: 0 }}
+               exit={{ scale: 0.9, y: 20 }}
+               src={product.img} 
+               className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
+             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="container py-6">
          <div className="flex items-center gap-2 text-[10px] font-bold text-secondary/40 uppercase tracking-widest">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
@@ -67,131 +106,135 @@ const ProductDetails = () => {
          </div>
       </div>
 
-      <section className="container pb-24 lg:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+      <section className="container pb-16 lg:pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
-          <div className="lg:col-span-7 space-y-4">
+          <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-24">
              <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="aspect-[4/5] rounded-[2.8rem] overflow-hidden bg-slate-50 border border-secondary/5 relative shadow-xl"
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               onClick={() => setIsZoomed(true)}
+               className="aspect-square rounded-[2rem] overflow-hidden bg-white border border-secondary/5 relative shadow-sm hover:shadow-xl transition-all cursor-zoom-in group"
              >
-                <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+                <img src={product.img} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 
                 {product.badge && (
-                  <div className="absolute top-8 left-8 bg-primary text-white text-[10px] font-black px-6 py-2.5 rounded-full uppercase tracking-widest shadow-2xl shadow-primary/30 z-10">
+                  <div className="absolute top-6 left-6 bg-primary text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-xl shadow-primary/20 z-10">
                     {product.badge}
                   </div>
                 )}
 
                 <button 
-                  onClick={() => toggleWishlist(product)}
+                  onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
                   className={cn(
-                    "absolute top-8 right-8 w-14 h-14 backdrop-blur-md rounded-full flex items-center justify-center transition-all shadow-2xl active:scale-150 z-10",
+                    "absolute top-6 right-6 w-12 h-12 backdrop-blur-md rounded-full flex items-center justify-center transition-all shadow-xl active:scale-125 z-10",
                     isInWishlist(product.id) ? "bg-rose-500 text-white" : "bg-white/80 text-secondary/40 hover:text-rose-500"
                   )}
                 >
-                  <Heart size={22} fill={isInWishlist(product.id) ? "currentColor" : "none"} strokeWidth={2.5} />
+                  <Heart size={20} fill={isInWishlist(product.id) ? "currentColor" : "none"} strokeWidth={2} />
                 </button>
              </motion.div>
 
-             <div className="grid grid-cols-4 gap-4 px-2">
+             <div className="grid grid-cols-4 gap-3 px-1">
                 {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="aspect-square rounded-2xl bg-slate-50 border border-secondary/5 overflow-hidden cursor-pointer hover:border-primary transition-all opacity-80 hover:opacity-100 hover:-translate-y-1">
+                  <div key={i} className="aspect-square rounded-xl bg-white border border-secondary/5 overflow-hidden cursor-pointer hover:border-primary transition-all opacity-60 hover:opacity-100">
                      <img src={product.img} className="w-full h-full object-cover" />
                   </div>
                 ))}
              </div>
           </div>
 
-          <div className="lg:col-span-5 space-y-12 py-4">
-             <div className="space-y-6">
+          <div className="lg:col-span-7 space-y-8 py-2">
+             <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                   <div className="flex items-center gap-1 bg-amber-400/10 text-amber-600 px-4 py-2 rounded-full border border-amber-400/10">
-                      <Star size={14} className="fill-amber-400 text-amber-400" />
-                      <span className="text-[11px] font-black">{product.rating || '4.9'}</span>
+                   <div className="flex items-center gap-1 bg-amber-400/10 text-amber-600 px-3 py-1.5 rounded-full border border-amber-400/10">
+                      <Star size={12} className="fill-amber-400 text-amber-400" />
+                      <span className="text-[10px] font-black">{product.rating || '4.9'}</span>
                    </div>
-                   <span className="text-[10px] font-black text-secondary/30 uppercase tracking-widest">2.4k Global Recommendations</span>
-                   <div className="h-4 w-px bg-slate-100 mx-1" />
-                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-2 rounded-full border border-green-100">
+                   <span className="text-[9px] font-black text-secondary/30 uppercase tracking-widest">2.4k Global Recommendations</span>
+                   <div className="h-3 w-px bg-slate-100 mx-0.5" />
+                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-2.5 py-1.5 rounded-full border border-green-100">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                      <span className="text-[10px] font-black uppercase tracking-widest">In Stock</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest">In Stock</span>
                    </div>
                 </div>
 
-                <h1 className="text-4xl md:text-6xl font-black text-secondary tracking-tighter uppercase leading-[0.8] font-heading">
+                <h1 className="text-3xl md:text-5xl font-black text-secondary tracking-tight uppercase leading-tight font-heading">
                    {product.name}
                 </h1>
                 <div className="flex items-center gap-3">
-                   <span className="text-[11px] font-black text-primary uppercase tracking-[0.3em]">Master Item Code: {product.sku || 'DK-MASTER-X'}</span>
+                   <span className="text-[10px] font-bold text-primary/60 uppercase tracking-wider">SKU: {product.sku || 'DK-MASTER-X'}</span>
                 </div>
              </div>
 
-             <div className="space-y-4">
-                <div className="flex items-baseline gap-6 border-b border-slate-50 pb-8">
-                   <span className="text-5xl font-black text-secondary leading-none">₹{Number(product.price).toLocaleString()}</span>
+             <div className="space-y-3">
+                <div className="flex items-baseline gap-4 border-b border-slate-50 pb-6">
+                   <span className="text-3xl font-black text-secondary leading-none">₹{Number(product.price).toLocaleString()}</span>
                    {product.old_price && (
-                      <span className="text-2xl font-bold text-secondary/20 line-through italic leading-none">₹{Number(product.old_price).toLocaleString()}</span>
+                      <span className="text-xl font-bold text-secondary/20 line-through italic leading-none">₹{Number(product.old_price).toLocaleString()}</span>
                    )}
-                   <span className="bg-emerald-50 text-emerald-600 text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-widest border border-emerald-100">Limited Offer</span>
+                   <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest border border-emerald-100">Limited Offer</span>
                 </div>
-                <p className="text-[10px] font-black text-secondary/30 uppercase tracking-[0.1em] px-1">Price varies by region. Shipping calculated at checkout.</p>
+                <p className="text-[9px] font-bold text-secondary/30 uppercase tracking-wider px-1">Tax included. Shipping calculated at checkout.</p>
              </div>
 
-             <div className="space-y-8 pt-8">
-                <div className="flex items-center gap-8">
-                   <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Select Quantity</span>
-                   <div className="flex items-center bg-slate-50 rounded-2xl p-2 border border-secondary/5 shadow-inner">
+             <div className="space-y-6 pt-4">
+                <div className="flex items-center gap-6">
+                   <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Quantity</span>
+                   <div className="flex items-center bg-slate-50 rounded-xl p-1.5 border border-secondary/5">
                       <button 
                         onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                        className="w-12 h-12 flex items-center justify-center text-secondary hover:bg-white rounded-xl transition-all hover:shadow-lg active:scale-90"
+                        className="w-10 h-10 flex items-center justify-center text-secondary hover:bg-white rounded-lg transition-all active:scale-90"
                       >
-                         <Minus size={16} />
+                         <Minus size={14} />
                       </button>
-                      <span className="w-16 text-center font-black text-2xl text-secondary">{quantity}</span>
+                      <span className="w-12 text-center font-black text-xl text-secondary">{quantity}</span>
                       <button 
                         onClick={() => setQuantity(prev => prev + 1)}
-                        className="w-12 h-12 flex items-center justify-center text-secondary hover:bg-white rounded-xl transition-all hover:shadow-lg active:scale-90"
+                        className="w-10 h-10 flex items-center justify-center text-secondary hover:bg-white rounded-lg transition-all active:scale-90"
                       >
-                         <Plus size={16} />
+                         <Plus size={14} />
                       </button>
                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                    <button 
                      onClick={() => addToCart({ ...product, quantity })}
-                     className="w-full bg-secondary text-white py-6 rounded-3xl font-black text-[10px] uppercase tracking-[0.3em] shadow-3xl shadow-secondary/20 flex items-center justify-center gap-4 active:scale-[0.98] transition-all hover:bg-black group"
+                     className="w-full bg-secondary text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-secondary/10 flex items-center justify-center gap-3 active:scale-[0.98] transition-all hover:bg-black group"
                    >
-                      <ShoppingBag size={20} className="group-hover:-rotate-12 transition-transform" /> Add to Order Bag
+                      <ShoppingBag size={18} className="group-hover:-rotate-12 transition-transform" /> Add to Bag
                    </button>
-                   <button className="w-full bg-primary text-white py-6 rounded-3xl font-black text-[10px] uppercase tracking-[0.3em] shadow-3xl shadow-primary/30 flex items-center justify-center gap-4 active:scale-[0.98] transition-all group overflow-hidden relative">
-                      <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                      <ShoppingCart size={20} /> Secure Checkout
+                   <button 
+                     onClick={handleBuyNow}
+                     className="w-full bg-primary text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all group overflow-hidden relative"
+                   >
+                      <div className="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                      <ShoppingCart size={18} /> Buy Now
                    </button>
                 </div>
              </div>
 
-             <div className="grid grid-cols-2 gap-6 pt-10 border-t border-slate-50">
-                <div className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition-all cursor-pointer">
-                   <div className="text-primary bg-primary/5 w-10 h-10 flex items-center justify-center rounded-xl"><Truck size={20} /></div>
+             <div className="grid grid-cols-2 gap-4 pt-8 border-t border-slate-50">
+                <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                   <div className="text-primary bg-primary/5 w-8 h-8 flex items-center justify-center rounded-lg"><Truck size={16} /></div>
                    <div>
-                      <p className="text-[10px] font-black text-secondary uppercase tracking-widest leading-none mb-1">Fast Logistics</p>
-                      <p className="text-[9px] font-bold text-secondary/30 uppercase tracking-widest leading-none">3-5 Business Days</p>
+                      <p className="text-[9px] font-black text-secondary uppercase tracking-widest leading-none mb-1">Shipping</p>
+                      <p className="text-[8px] font-bold text-secondary/30 uppercase tracking-widest leading-none">3-5 Days</p>
                    </div>
                 </div>
-                <div className="flex items-center gap-4 p-5 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition-all cursor-pointer">
-                   <div className="text-secondary bg-slate-50 w-10 h-10 flex items-center justify-center rounded-xl"><RotateCcw size={20} /></div>
+                <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                   <div className="text-secondary bg-slate-50 w-8 h-8 flex items-center justify-center rounded-lg"><RotateCcw size={16} /></div>
                    <div>
-                      <p className="text-[10px] font-black text-secondary uppercase tracking-widest leading-none mb-1">Vault Shield</p>
-                      <p className="text-[9px] font-bold text-secondary/30 uppercase tracking-widest leading-none">7 Day No-Risk Retraction</p>
+                      <p className="text-[9px] font-black text-secondary uppercase tracking-widest leading-none mb-1">Returns</p>
+                      <p className="text-[8px] font-bold text-secondary/30 uppercase tracking-widest leading-none">7 Day Policy</p>
                    </div>
                 </div>
              </div>
 
-             <div className="space-y-6">
-                <h3 className="text-[11px] font-black text-secondary uppercase tracking-[0.4em] border-l-4 border-primary pl-4">Product Philosophy</h3>
-                <p className="text-xs font-black text-secondary/40 leading-[2] uppercase tracking-widest">
+             <div className="space-y-4 pt-4">
+                <h3 className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] border-l-3 border-primary pl-3">Description</h3>
+                <p className="text-[11px] font-medium text-secondary/50 leading-relaxed uppercase tracking-widest">
                    {product.description || "The exclusive product collection helps to drive innovation and shape the way we live, work and interact with our environment. Experience the premium quality craftsmanship and superior materials used in every piece."}
                 </p>
              </div>
@@ -211,9 +254,5 @@ const ProductDetails = () => {
     </div>
   );
 };
-
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export default ProductDetails;

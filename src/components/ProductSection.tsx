@@ -5,6 +5,7 @@ import { dataService } from '../dataService';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { cn } from '../lib/utils';
 
 interface ProductSectionProps {
   title: string;
@@ -146,9 +147,5 @@ const ProductSection: React.FC<ProductSectionProps> = ({ title, subtitle }) => {
     </section>
   );
 };
-
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export default ProductSection;

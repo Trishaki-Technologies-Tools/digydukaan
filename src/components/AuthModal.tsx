@@ -8,6 +8,7 @@ import { X, Smartphone, ArrowRight, ShieldCheck, Loader2, RefreshCw } from 'luci
 import { dataService } from '../dataService'; // Assuming profile management here
 import { msg91Service } from '../services/msg91Service';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -58,7 +59,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Handle Verify OTP via MSG91
+  const { setUser } = useAuth();
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const otpString = otp.join('').trim();
@@ -81,8 +82,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
          // Custom Auth Handshake: Check or Create profile in Supabase
          const user = await dataService.getOrCreateProfileByPhone(cleanPhone);
          
-         // Persist session (Using localStorage for simplified custom auth)
-         localStorage.setItem('digydukaan_user', JSON.stringify(user));
+         // Persist session via Context
+         setUser(user);
          
          const destination = localStorage.getItem('redirect_after_login');
          localStorage.removeItem('redirect_after_login');
@@ -92,8 +93,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
          
          if (destination) {
             navigate(destination);
-         } else {
-            window.location.reload(); 
          }
       } catch (err) {
          setLoading(false);

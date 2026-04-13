@@ -23,19 +23,13 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
-
-  // Load from local storage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('digydukaan_cart');
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error('Failed to parse cart:', e);
-      }
+  const [items, setItems] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('digydukaan_cart');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { return []; }
     }
-  }, []);
+    return [];
+  });
 
   // Save to local storage on change
   useEffect(() => {

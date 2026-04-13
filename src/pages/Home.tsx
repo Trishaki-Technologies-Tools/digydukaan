@@ -10,7 +10,6 @@ import BannerCollage from '../components/BannerCollage';
 import Testimonials from '../components/Testimonials';
 import Newsletter from '../components/Newsletter';
 import Footer from '../components/Footer';
-import MobileNav from '../components/MobileNav';
 
 const Home = () => {
   return (
@@ -70,7 +69,6 @@ const Home = () => {
       <Testimonials />
       <Newsletter />
       <Footer />
-      <MobileNav />
     </div>
   );
 };

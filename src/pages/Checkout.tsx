@@ -9,9 +9,11 @@ import { cn } from '../lib/utils';
 import TopBar from '../components/TopBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useAuth } from '../context/AuthContext';
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -27,6 +29,16 @@ const Checkout = () => {
   });
 
   useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.full_name || prev.name,
+        phone: user.phone || prev.phone
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (items.length === 0 && !success) {
       navigate('/');
     }
@@ -36,15 +48,20 @@ const Checkout = () => {
     e.preventDefault();
     setLoading(true);
     
-    const { data: { session } } = await supabase.auth.getSession();
-    
     const orderData = {
       customer_name: formData.name,
-      customer_email: session?.user?.email || '',
+      customer_email: user?.email || '',
       customer_phone: formData.phone,
       total_amount: totalPrice,
       status: 'pending',
-      items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.rawPrice })),
+      items: items.map(i => ({ 
+        id: i.id, 
+        name: i.name, 
+        quantity: i.quantity, 
+        price: i.rawPrice,
+        img: i.img,
+        category: i.category
+      })),
       address: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
       payment_method: formData.paymentMode
     };

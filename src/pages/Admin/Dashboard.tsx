@@ -23,11 +23,11 @@ const AdminDashboard = () => {
        ] = await Promise.all([
          supabase.from('products').select('*', { count: 'exact', head: true }),
          supabase.from('orders').select('*', { count: 'exact', head: true }),
-         supabase.from('orders').select('customer_email'), 
+         supabase.from('profiles').select('*', { count: 'exact', head: true }), 
          supabase.from('orders').select('*')
        ]);
 
-       const totalRev = oData?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
+       const totalRev = oData?.reduce((acc, curr) => acc + Number(curr.total_amount || curr.amount || 0), 0) || 0;
 
        setCounts({
          products: pCount || 0,

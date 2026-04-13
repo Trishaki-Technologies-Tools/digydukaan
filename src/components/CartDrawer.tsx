@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, LogIn } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 
 interface CartDrawerProps {
@@ -15,26 +15,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const { items, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
   const navigate = useNavigate();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-
-  // Sync login status for instant button response
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { user } = useAuth();
 
   const handleCheckout = async () => {
-    if (!currentUser) {
-       // 1. Save destination for after-login
+    if (!user) {
        localStorage.setItem('redirect_after_login', '/checkout');
-       // 2. Open Auth Modal
        setIsAuthOpen(true);
     } else {
        onClose();
@@ -166,8 +151,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     className="w-full bg-secondary text-white py-6 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.3em] shadow-3xl shadow-secondary/30 flex items-center justify-center gap-4 active:scale-[0.98] transition-all group overflow-hidden relative"
                   >
                     <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
-                    {currentUser ? 'Proceed to Secure Checkout' : 'Login to Complete Order'}
-                    {currentUser ? <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /> : <LogIn size={18} className="group-hover:rotate-12 transition-transform" />}
+                    {user ? 'Proceed to Secure Checkout' : 'Login to Complete Order'}
+                    {user ? <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /> : <LogIn size={18} className="group-hover:rotate-12 transition-transform" />}
                   </button>
                   
                   <div className="flex items-center gap-3 justify-center">
