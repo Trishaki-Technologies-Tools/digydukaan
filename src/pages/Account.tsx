@@ -78,7 +78,9 @@ const Account = () => {
         updates.customer_email = email;
      }
      
-     const { data, error } = await dataService.updateProfile(user.phone, updates);
+     const result: any = await dataService.updateProfile(user.phone, updates);
+     const data = result.data;
+     const error = result.error;
      
      if (error) {
         console.error("Update error:", error);
