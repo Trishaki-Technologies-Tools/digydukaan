@@ -29,7 +29,9 @@ import { dataService } from '../dataService';
 
 const Account = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const { user, logout, setUser } = useAuth();
   const [history, setHistory] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('hub'); // hub, details
   const [profile, setProfile] = useState<any>(null);
@@ -55,7 +57,39 @@ const Account = () => {
     if (user?.phone) {
        const data = await dataService.getProfile(user.phone);
        setProfile(data);
+       if (data) {
+          setFullName(data.full_name || data.customer_name || '');
+          setEmail(data.customer_email || data.email || '');
+       }
     }
+  };
+
+  const handleSaveProfile = async () => {
+     if (!user?.phone) return;
+     
+     setLoading(true);
+     const updates: any = {
+        full_name: fullName
+     };
+     
+     // Only try to update email if we're sure about the column or using the one that's likely there
+     // Based on Customers dashboard, it might be customer_email
+     if (email) {
+        updates.customer_email = email;
+     }
+     
+     const { data, error } = await dataService.updateProfile(user.phone, updates);
+     
+     if (error) {
+        console.error("Update error:", error);
+        alert(`Failed to update profile: ${error.message || 'Unknown error'}`);
+     } else if (data && data[0]) {
+        setProfile(data[0]);
+        // Sync with Auth Context - Ensure we update the context with the new data
+        setUser(data[0]);
+        alert("Profile updated successfully!");
+     }
+     setLoading(false);
   };
 
   const handleRemoveAddress = async () => {
@@ -154,7 +188,7 @@ const Account = () => {
                         <h1 className="text-3xl font-black uppercase tracking-tighter">{currentProfile.full_name || 'Premium Member'}</h1>
                         <ShieldCheck size={24} className="text-primary" />
                       </div>
-                      <p className="text-xs font-bold text-white/40 tracking-[0.4em] uppercase">{currentProfile.phone}</p>
+                      <p className="text-xs font-bold text-white/40 tracking-[0.4em] uppercase">{currentProfile.full_name ? 'Secured Profile' : currentProfile.phone}</p>
                     </div>
                     <div className="flex flex-wrap justify-center md:justify-start gap-3">
                        <div className="px-5 py-2.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex items-center gap-2">
@@ -305,7 +339,8 @@ const Account = () => {
                               <UserIcon size={20} className="text-slate-300 group-focus-within:text-primary transition-colors" />
                               <input 
                                  type="text" 
-                                 defaultValue={currentProfile.full_name || ''} 
+                                 value={fullName}
+                                 onChange={(e) => setFullName(e.target.value)}
                                  placeholder="Enter your name"
                                  className="bg-transparent border-none text-[15px] font-bold text-secondary focus:outline-none w-full placeholder:text-slate-300"
                               />
@@ -337,14 +372,20 @@ const Account = () => {
                            <Mail size={20} className="text-slate-300 group-focus-within:text-primary transition-colors" />
                            <input 
                               type="email" 
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
                               placeholder="Add email for reports & invoices" 
                               className="bg-transparent border-none text-[15px] font-bold text-secondary focus:outline-none w-full placeholder:text-slate-300"
                            />
                         </div>
                      </div>
 
-                     <button className="bg-primary text-white w-full py-5 rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.4em] shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-[0.98] mt-4">
-                        Save Profile Changes
+                     <button 
+                        onClick={handleSaveProfile}
+                        disabled={loading}
+                        className="bg-primary text-white w-full py-5 rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.4em] shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-3 disabled:opacity-50"
+                     >
+                        {loading ? <Loader2 className="animate-spin" size={20} /> : 'Save Profile Changes'}
                      </button>
                   </div>
                </div>

@@ -8,10 +8,6 @@ const TopBar = () => {
         </div>
         <div className="flex gap-6 items-center">
           <a href="#" className="hover:text-white transition-colors">Track your order</a>
-          <a href="#" className="hover:text-white transition-colors">Find a Store</a>
-          <div className="flex items-center gap-1 border-l border-white/10 pl-6 h-3">
-             <span>IND / ₹ - EN</span>
-          </div>
         </div>
       </div>
     </div>

@@ -48,7 +48,6 @@ const Footer = () => {
             <div className="col-span-2 md:col-span-1">
               <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white mb-6 md:mb-8 font-heading">Support</h4>
               <ul className="space-y-4 text-xs md:text-sm font-medium text-white/60">
-                <li><a href="#" className="hover:text-primary transition-colors">Our Service</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Shipping</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Gift Card</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Terms Conditions</a></li>
@@ -67,10 +66,7 @@ const Footer = () => {
                 <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
             </div>
           </div>
-          <div className="flex gap-8 text-[10px] font-bold text-white/40 uppercase tracking-widest">
-              <span>Next Gen E-Commerce</span>
-              <span>Digy Dukaan</span>
-          </div>
+
         </div>
       </div>
     </footer>

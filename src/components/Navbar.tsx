@@ -28,6 +28,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const { totalItems, totalPrice } = useCart();
   const { wishlistCount } = useWishlist();
+  const [deliveryLocation, setDeliveryLocation] = useState('Belgaum 590001');
 
   useEffect(() => {
     dataService.getProducts().then(data => {
@@ -45,6 +46,37 @@ const Navbar = () => {
       setDynamicCategories(formattedCats);
     });
   }, []);
+
+  useEffect(() => {
+    // 1. Initially check if user has a saved city in their profile
+    if (user?.city) {
+       setDeliveryLocation(`${user.city} ${user.pincode || ''}`.trim());
+    }
+
+    // 2. After 10 seconds, try to get live location
+    const timer = setTimeout(() => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`);
+            const data = await response.json();
+            if (data.address) {
+              const city = data.address.city || data.address.town || data.address.village || data.address.state_district || 'Detected';
+              const postcode = data.address.postcode || '';
+              setDeliveryLocation(`${city} ${postcode}`.trim());
+            }
+          } catch (error) {
+            console.error("Error fetching live location:", error);
+          }
+        }, (error) => {
+          console.warn("Geolocation permission denied or error:", error);
+        });
+      }
+    }, 10000); // 10 seconds
+
+    return () => clearTimeout(timer);
+  }, [user]);
 
   const ExplorerIcon = (iconName: string, isSelected: boolean) => {
     const IconComp = getIconByName(iconName);
@@ -109,7 +141,7 @@ const Navbar = () => {
                 </div>
                 <div className="flex flex-col leading-none">
                    <span className="text-[9px] font-black text-secondary/30 uppercase tracking-widest mb-1">Deliver to</span>
-                   <span className="text-[11px] font-black text-secondary uppercase tracking-tight">Belgaum 590001</span>
+                   <span className="text-[11px] font-black text-secondary uppercase tracking-tight">{deliveryLocation}</span>
                 </div>
              </div>
           </div>
@@ -177,27 +209,27 @@ const Navbar = () => {
                 onClick={() => user ? null : setIsAuthModalOpen(true)}
                 className="hidden sm:flex items-center gap-3 px-3 py-2 border border-transparent hover:border-slate-100 hover:bg-slate-50 rounded-xl transition-all"
               >
-                 {user ? (
-                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-primary/20 uppercase">
-                       {user.full_name?.[0] || user.phone?.[0] || 'M'}
-                    </div>
-                 ) : (
+                  {user ? (
+                     <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-primary/20 uppercase">
+                        {user.full_name?.[0] || user.phone?.[0] || 'M'}
+                     </div>
+                  ) : (
                     <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-secondary/40">
                        <User size={18} />
                     </div>
                  )}
-                 <div className="hidden lg:flex flex-col items-start leading-none">
-                    <p className="text-[10px] font-black text-secondary/30 uppercase tracking-widest mb-1">Hello, {user?.full_name || 'Member'}</p>
-                    <p className="text-[11px] font-black text-secondary uppercase tracking-tighter">{user?.phone || 'Account Hub'}</p>
-                 </div>
+                  <div className="hidden lg:flex flex-col items-start leading-none">
+                     <p className="text-[10px] font-black text-secondary/30 uppercase tracking-widest mb-1">Hello,</p>
+                     <p className="text-[11px] font-black text-secondary uppercase tracking-tighter">{user?.full_name || user?.phone || 'Account Hub'}</p>
+                  </div>
               </button>
 
               {user && (
                  <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                    <div className="px-4 py-3 border-b border-slate-50 mb-1">
-                       <p className="text-[10px] font-black text-secondary uppercase tracking-widest truncate">{user.full_name || 'Member'}</p>
-                       <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{user.phone}</p>
-                    </div>
+                     <div className="px-4 py-3 border-b border-slate-50 mb-1">
+                        <p className="text-[10px] font-black text-secondary uppercase tracking-widest truncate">{user.full_name || 'Member'}</p>
+                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest italic">{user.full_name ? 'Premium Member' : user.phone}</p>
+                     </div>
                     <Link to="/account" className="flex items-center gap-3 px-4 py-3 text-[10px] font-black text-secondary/60 hover:text-primary hover:bg-slate-50 transition-all uppercase tracking-widest">
                        <User size={14} /> Account Details
                     </Link>
@@ -213,7 +245,7 @@ const Navbar = () => {
 
             {/* Wishlist Link */}
             <Link 
-              to="/orders" 
+              to="/wishlist" 
               className="relative hidden md:flex w-10 h-10 items-center justify-center text-secondary/20 hover:text-rose-500 transition-all group"
             >
               <Heart size={20} fill={wishlistCount > 0 ? "currentColor" : "none"} className={wishlistCount > 0 ? "text-rose-500 animate-pulse" : ""} />

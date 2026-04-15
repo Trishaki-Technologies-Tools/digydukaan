@@ -55,7 +55,14 @@ const CategoryScroll = () => {
                 key={`${cat.id}-${i}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                onClick={() => navigate(`/category/${cat.id}`)}
+                onClick={() => {
+                  if (cat.name === 'For You' || cat.id === 'all') {
+                    navigate('/');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  } else {
+                    navigate(`/category/${cat.id}`);
+                  }
+                }}
                 className="flex flex-col items-center gap-1 group cursor-pointer transition-all active:scale-95"
               >
                 <div className={`w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-opacity-100 ${colorClass.split(' ')[0]} bg-opacity-25`}>
